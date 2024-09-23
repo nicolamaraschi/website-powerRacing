@@ -1,0 +1,22 @@
+/* src/pages/ChiSiamo.css */
+.container {
+    padding: 20px;
+  }
+  
+  h1, h2 {
+    color: #333;
+  }
+  
+  ul {
+    list-style-type: disc;
+    margin-left: 20px;
+  }
+  
+  /* ChiSiamo.css */
+.img-uniform {
+  width: 100%;
+  height: auto;
+  max-width: 400px; /* Imposta la larghezza massima */
+  object-fit: cover;
+}
+

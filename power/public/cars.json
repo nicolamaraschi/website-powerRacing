@@ -1,0 +1,35 @@
+[
+    {
+      "image": "/fiat500.jpg",
+      "title": "Fiat 500",
+      "description": "Compatta e maneggevole, perfetta per la città.",
+      "mileage": "45,000 km",
+      "year": "2019",
+      "price": "€10,500"
+    },
+    {
+      "image": "/car2.jpg",
+      "title": "BMW Serie 3",
+      "description": "Auto sportiva con prestazioni elevate.",
+      "mileage": "85,000 km",
+      "year": "2018",
+      "price": "€20,800"
+    },
+    {
+      "image": "/car3.jpg",
+      "title": "Audi A4",
+      "description": "Eleganza e comfort, perfetta per lunghi viaggi.",
+      "mileage": "60,000 km",
+      "year": "2020",
+      "price": "€25,500"
+    },
+    {
+      "image": "/car4.jpg",
+      "title": "Mercedes C-Class",
+      "description": "Lussuosa e affidabile con tecnologia all’avanguardia.",
+      "mileage": "30,000 km",
+      "year": "2021",
+      "price": "€35,000"
+    }
+  ]
+  

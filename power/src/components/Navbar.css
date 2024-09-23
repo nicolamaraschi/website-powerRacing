@@ -1,0 +1,28 @@
+/* src/components/Navbar.css */
+
+.navbar {
+    padding: 0.5rem 1rem; /* Aggiusta il padding se necessario */
+  }
+  
+  .navbar-brand {
+    margin-right: auto; /* Allinea il nome a sinistra */
+  }
+  
+  .navbar-nav {
+    text-align: center; /* Centra i link */
+    width: 100%; /* Assicura che l'elenco dei link occupi tutta la larghezza disponibile */
+  }
+  
+  .nav-item {
+    margin-left: 1rem; /* Aggiusta il margine tra i link */
+    margin-right: 1rem;
+  }
+  
+  .nav-link {
+    color: #000; /* Imposta il colore del link se necessario */
+  }
+  
+  .nav-link:hover {
+    color: #007bff; /* Imposta il colore del link al passaggio del mouse */
+  }
+  

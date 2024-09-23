@@ -1,0 +1,56 @@
+/* src/pages/Servizi.css */
+
+.service-box {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #ffffff;
+      transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+       border: none; /* Rimuovi il bordo predefinito per un look più pulito */
+  }
+  
+  .service-box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Titolo del servizio */
+  .service-box h3 {
+    margin: 20px 15px 10px;
+    font-size: 1.5rem;
+    font-family: 'Georgia', serif; /* Font serif per un aspetto più elegante */
+    color: #333;
+}
+  
+  /* Testo e lista del servizio */
+.service-box p, .service-box ul {
+    font-size: 1rem;
+    color: #666;
+    margin: 0 15px 15px;
+    font-family: 'Arial', sans-serif; /* Font sans-serif per leggibilità */
+}
+  
+  .service-box ul {
+    padding-left: 0;
+    list-style: none;
+  }
+  
+  .service-box ul li {
+    margin-bottom: 0.5rem;
+  }
+  
+  /* Immagine del servizio */
+.service-image {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-bottom: 4px solid #f5f5f5; /* Aggiunge una linea sottile sotto l'immagine */
+}
+
+  
+  @media (max-width: 768px) {
+    .service-box {
+      margin-bottom: 1rem;
+    }
+  }
+  
