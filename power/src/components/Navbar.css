@@ -11,6 +11,7 @@
   .navbar-nav {
     text-align: center; /* Centra i link */
     width: 100%; /* Assicura che l'elenco dei link occupi tutta la larghezza disponibile */
+    justify-content: center; /* Centra i link nella navbar */
   }
   
   .nav-item {
