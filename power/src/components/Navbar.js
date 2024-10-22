@@ -5,35 +5,32 @@ import './Navbar.css';
 const Navbar = () => {
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light">
+      {/* Nome dell'azienda con il font Oswald */}
       <a className="navbar-brand" href="#">
-        <img 
-          src="/logo.png" 
-          alt="Power Racing Logo" 
-          style={{ height: '100px' }} // Imposta l'altezza desiderata per il logo
-        />
+        POWER RACING
       </a>
       <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span className="navbar-toggler-icon"></span>
       </button>
       <div className="collapse navbar-collapse" id="navbarNav">
-        <ul className="navbar-nav mx-auto"> {/* Aggiungi mx-auto per centrare */}
+        <ul className="navbar-nav mx-auto">
           <li className="nav-item active">
-            <Link className="nav-link" to="/">Home <span className="sr-only">(current)</span></Link>
+            <Link className="nav-link" to="/">🏠 Home <span className="sr-only">(current)</span></Link>
           </li>
           <li className="nav-item">
-            <Link className="nav-link" to="/chisiamo">Chi siamo</Link>
+            <Link className="nav-link" to="/chisiamo">👥 Chi siamo</Link>
           </li>
           <li className="nav-item">
-            <Link className="nav-link" to="/servizi">Servizi</Link>
+            <Link className="nav-link" to="/servizi">💼 Servizi</Link>
           </li>
           <li className="nav-item">
-            <Link className="nav-link" to="/vetrina">Vetrina usato</Link>
+            <Link className="nav-link" to="/vetrina">🚗 Vetrina usato</Link>
           </li>
           <li className="nav-item">
-            <Link className="nav-link" to="/link">Link</Link>
+            <Link className="nav-link" to="/link">🔗 Link</Link>
           </li>
           <li className="nav-item">
-            <Link className="nav-link" to="/contatti">Contatti</Link>
+            <Link className="nav-link" to="/contatti">📞 Contatti</Link>
           </li>
         </ul>
       </div>

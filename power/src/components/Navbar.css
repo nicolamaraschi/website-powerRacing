@@ -1,29 +1,57 @@
-/* src/components/Navbar.css */
+/* Importa i font personalizzati */
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&family=Roboto+Slab:wght@100..900&display=swap');
 
+/* Stili per la navbar */
 .navbar {
-    padding: 0.5rem 1rem; /* Aggiusta il padding se necessario */
-  }
-  
-  .navbar-brand {
-    margin-right: auto; /* Allinea il nome a sinistra */
-  }
-  
-  .navbar-nav {
-    text-align: center; /* Centra i link */
-    width: 100%; /* Assicura che l'elenco dei link occupi tutta la larghezza disponibile */
-    justify-content: center; /* Centra i link nella navbar */
-  }
-  
-  .nav-item {
-    margin-left: 1rem; /* Aggiusta il margine tra i link */
+    padding: 0.5rem 1rem;
+}
+
+/* Stili per il nome dell'azienda */
+.navbar-brand {
+    font-family: 'Oswald', sans-serif; /* Applica il font Oswald solo al nome dell'azienda */
+    font-size: 2rem;
+    font-weight: 700;
+    color: #000;
+    padding-left: 5%; /* Mantieni questo per desktop */
+}
+ 
+/* Stili per i link */
+.navbar-nav {
+    text-align: center;
+    width: 100%;
+    justify-content: center;
+}
+
+.nav-item {
+    margin-left: 1rem;
     margin-right: 1rem;
-  }
-  
-  .nav-link {
-    color: #000; /* Imposta il colore del link se necessario */
-  }
-  
-  .nav-link:hover {
-    color: #007bff; /* Imposta il colore del link al passaggio del mouse */
-  }
-  
+}
+
+.nav-link {
+    font-family: 'Roboto Slab', serif; /* Applica il font Roboto Slab ai link */
+    color: #000;
+    font-size: 1.2rem;
+}
+
+.nav-link:hover {
+    color: #007bff;
+}
+
+/* Media queries per ridurre il nome dell'azienda e i link sui dispositivi mobili */
+@media (max-width: 768px) {
+    
+
+    .nav-link {
+        font-size: 1rem; /* Riduci la dimensione dei link sui dispositivi più piccoli */
+    }
+}
+
+@media (max-width: 480px) {
+    .navbar-brand {
+        font-size: 1.2rem; /* Riduci ulteriormente la dimensione del nome dell'azienda sui telefoni piccoli */
+    }
+
+    .nav-link {
+        font-size: 0.9rem; /* Riduci ulteriormente la dimensione dei link sui telefoni piccoli */
+    }
+}
