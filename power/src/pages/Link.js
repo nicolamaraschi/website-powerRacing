@@ -18,7 +18,7 @@ const links = [
     url: 'https://www.ciaomilano.com',
     title: 'Ciao Milano',
     description: 'Locali, mappe, iniziative. Tutte le informazioni utili per vivere al meglio Milano.',
-    image: '/_42bb8efc-d03f-42ce-9bfc-13d0766e3e66.jpeg',
+    image: '/ciaoMilano.jpeg',
   },
   {
     url: 'https://www.mangiarefuori.it',
@@ -42,13 +42,13 @@ const links = [
     url: 'https://www.tiscali.it',
     title: 'Tiscali',
     description: 'Un modo rapido per consultare un database tra i più aggiornati disponibili sul web.',
-    image: '/_fb75380c-b642-4434-9db7-868935a604be.jpeg',
+    image: '/tiscali.png',
   },
   {
     url: 'https://www.benessere.com',
     title: 'Benessere',
     description: 'Tutte le informazioni possibili sul benessere psicofisico. Per essere sempre in forma.',
-    image: '/_a90ce777-6514-4216-9bab-3f42446071ac.jpeg',
+    image: '/benessere.jpeg',
   },
 ];
 
