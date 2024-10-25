@@ -10,7 +10,7 @@
 
 .vertical-timeline-element img {
   width: 100%;             /* Imposta la larghezza al 100% del contenitore */
-  max-width: 200px;       /* Limita la larghezza massima a 200px */
+  max-width: 500px;       /* Limita la larghezza massima a 200px */
   height: auto;           /* Mantiene il rapporto d'aspetto dell'immagine */
   border-radius: 5px;     /* Angoli arrotondati */
   margin-top: 10px;       /* Spazio sopra l'immagine */
@@ -18,12 +18,12 @@
 }
 @media (max-width: 768px) {
   .vertical-timeline-element img {
-      max-width: 150px;   /* Limita la larghezza massima a 150px per schermi piccoli */
+      max-width: 300px;   /* Limita la larghezza massima a 150px per schermi piccoli */
   }
 }
 
 @media (max-width: 480px) {
   .vertical-timeline-element img {
-      max-width: 100px;   /* Limita la larghezza massima a 100px per schermi extra piccoli */
+      max-width: 300px;   /* Limita la larghezza massima a 100px per schermi extra piccoli */
   }
 }

@@ -17,16 +17,16 @@ const Servizi = () => {
             <h3>🏎️ Preparazioni Sportive</h3>
             <img src="/preparazioni.jpeg" alt="Preparazioni Sportive" className="service-image" />
             <ul className="list-unstyled">
-              <li>Centraline B.</li>
-              <li>Centraline D.</li>
-              <li>Filtri Aria (K&N, H&M, Sparco).</li>
-              <li>Scarichi Sportivi (Laser, Sebring, Tuner).</li>
-              <li>Impianti frenanti (Mintex, Ferodo R., Braking).</li>
-              <li>Distanziali (Runner).</li>
-              <li>Alberi a camme.</li>
-              <li>Assetti Sportivi.</li>
-              <li>Molle (H&R, G&M, Eibacj, Fedem).</li>
-              <li>Ammortizzatori (Koni, G&M, Bilsteim).</li>
+              <li>🔧 Centraline B.</li>
+              <li>🔧 Centraline D.</li>
+              <li>🔧 Filtri Aria (K&N, H&M, Sparco).</li>
+              <li>🔧 Scarichi Sportivi (Laser, Sebring, Tuner).</li>
+              <li>🔧 Impianti frenanti (Mintex, Ferodo R., Braking).</li>
+              <li>🔧 Distanziali (Runner).</li>
+              <li>🔧 Alberi a camme.</li>
+              <li>🔧 Assetti Sportivi.</li>
+              <li>🔧 Molle (H&R, G&M, Eibach, Fedem).</li>
+              <li>🔧 Ammortizzatori (Koni, G&M, Bilstein).</li>
             </ul>
           </div>
         </div>
@@ -37,11 +37,11 @@ const Servizi = () => {
             <h3>🔧 Tagliandi Auto Benzina e Diesel</h3>
             <img src="/tagliando.jpeg" alt="Tagliandi Auto Benzina e Diesel" className="service-image" />
             <ul className="list-unstyled">
-              <li>Controllo e sostituzione pattini e dischi.</li>
-              <li>Sostituzione filtri.</li>
-              <li>Olio Motore (Fuchs, Agip, Elf).</li>
-              <li>Collaudo veicolo in strada.</li>
-              <li>Controllo e sostituzioni generali.</li>
+              <li>🛠️ Controllo e sostituzione pattini e dischi.</li>
+              <li>🛠️ Sostituzione filtri.</li>
+              <li>🛠️ Olio Motore (Fuchs, Agip, Elf).</li>
+              <li>🛠️ Collaudo veicolo in strada.</li>
+              <li>🛠️ Controllo e sostituzioni generali.</li>
             </ul>
           </div>
         </div>
@@ -52,15 +52,15 @@ const Servizi = () => {
             <h3>🔊 Impianti Stereo</h3>
             <img src="/stereo.jpeg" alt="Impianti Stereo" className="service-image" />
             <ul className="list-unstyled">
-              <li>Accessori.</li>
-              <li>Comandi volante.</li>
-              <li>Caricatori CD.</li>
-              <li>Kit viva-voce.</li>
-              <li>Altoparlanti.</li>
-              <li>Sub Woofer.</li>
-              <li>Equalizzatori processori.</li>
-              <li>Amplificatori.</li>
-              <li>Autoradio: Sinto CD, Sinto Cassette.</li>
+              <li>🎵 Accessori.</li>
+              <li>🎵 Comandi volante.</li>
+              <li>🎵 Caricatori CD.</li>
+              <li>🎵 Kit viva-voce.</li>
+              <li>🎵 Altoparlanti.</li>
+              <li>🎵 Sub Woofer.</li>
+              <li>🎵 Equalizzatori processori.</li>
+              <li>🎵 Amplificatori.</li>
+              <li>🎵 Autoradio: Sinto CD, Sinto Cassette.</li>
             </ul>
           </div>
         </div>
@@ -71,9 +71,9 @@ const Servizi = () => {
             <h3>🌬️ Assistenza A/C + Climatizzatori</h3>
             <img src="/climatizzatore.jpeg" alt="Assistenza A/C + Climatizzatori" className="service-image" />
             <ul className="list-unstyled">
-              <li>Manutenzione.</li>
-              <li>Sostituzione filtri.</li>
-              <li>Ricarica.</li>
+              <li>💧 Manutenzione.</li>
+              <li>💧 Sostituzione filtri.</li>
+              <li>💧 Ricarica.</li>
             </ul>
           </div>
         </div>
@@ -84,10 +84,10 @@ const Servizi = () => {
             <h3>🚗 Assistenza e Sostituzione Pneumatici</h3>
             <img src="/pneumatici.jpeg" alt="Assistenza e Sostituzione Pneumatici" className="service-image" />
             <ul className="list-unstyled">
-              <li>Riparazione tubes.</li>
-              <li>Secur-Pneus (miscela inerte per gonfiaggio pneumatici).</li>
-              <li>Convergenza ed Equilibratura.</li>
-              <li>Pneumatici (Michelin, Pirelli, Dunlop, Yokohama, Bridgestone).</li>
+              <li>🔄 Riparazione tubes.</li>
+              <li>🔄 Secur-Pneus (miscela inerte per gonfiaggio pneumatici).</li>
+              <li>🔄 Convergenza ed Equilibratura.</li>
+              <li>🔄 Pneumatici (Michelin, Pirelli, Dunlop, Yokohama, Bridgestone).</li>
             </ul>
           </div>
         </div>
