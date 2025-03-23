@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import carService from '../../services/carService';
-import './CarDetails.css';
+import './CarDetails.css'; // Importa il CSS corretto
 
 // Icone
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';

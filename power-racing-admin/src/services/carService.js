@@ -29,46 +29,71 @@ axiosInstance.interceptors.request.use(
 const carService = {
   // Ottieni tutte le auto (con paginazione e filtri)
   getCars: async (page = 1, limit = 10, filters = {}) => {
-    const response = await axiosInstance.get('/cars', { 
-      params: { page, limit, ...filters } 
-    });
-    return response;
+    try {
+      return await axiosInstance.get('/cars', { 
+        params: { page, limit, ...filters } 
+      });
+    } catch (error) {
+      console.error('Errore nel recupero delle auto:', error);
+      throw error;
+    }
   },
 
   // Ottieni dettagli di un'auto specifica
   getCarById: async (id) => {
-    const response = await axiosInstance.get(`/cars/${id}`);
-    return response;
+    try {
+      return await axiosInstance.get(`/cars/${id}`);
+    } catch (error) {
+      console.error(`Errore nel recupero dell'auto ${id}:`, error);
+      throw error;
+    }
   },
 
   // Crea una nuova auto
   createCar: async (carData) => {
-    const response = await axiosInstance.post('/cars', carData);
-    return response;
+    try {
+      return await axiosInstance.post('/cars', carData);
+    } catch (error) {
+      console.error('Errore nella creazione dell\'auto:', error);
+      throw error;
+    }
   },
 
   // Aggiorna un'auto esistente
   updateCar: async (id, carData) => {
-    const response = await axiosInstance.put(`/cars/${id}`, carData);
-    return response;
+    try {
+      return await axiosInstance.put(`/cars/${id}`, carData);
+    } catch (error) {
+      console.error(`Errore nell'aggiornamento dell'auto ${id}:`, error);
+      throw error;
+    }
   },
 
   // Elimina un'auto
   deleteCar: async (id) => {
-    const response = await axiosInstance.delete(`/cars/${id}`);
-    return response;
+    try {
+      return await axiosInstance.delete(`/cars/${id}`);
+    } catch (error) {
+      console.error(`Errore nell'eliminazione dell'auto ${id}:`, error);
+      throw error;
+    }
   },
 
   // Carica un'immagine per un'auto
   uploadImage: async (file) => {
-    const formData = new FormData();
-    formData.append('image', file);
-    const response = await axiosInstance.post('/upload', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
-    return response;
+    try {
+      const formData = new FormData();
+      formData.append('image', file);
+      
+      return await axiosInstance.post('/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+    } catch (error) {
+      console.error('Errore nel caricamento dell\'immagine:', error);
+      throw error;
+    }
   },
 };
 

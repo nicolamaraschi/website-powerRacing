@@ -3,15 +3,18 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-// Nel file server.js, modifica questa riga:
-const carRoutes = require('./routes/cars');
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
+
+// Import corretto del file delle rotte
+const carRoutes = require('./routes/carRoutes');
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 
-// Sostituisci con la tua password reale
-const DB_PASSWORD = 'nicolamaraschi01';
-const MONGODB_URI = `mongodb+srv://nicolamaraschi01:${DB_PASSWORD}@cluster0.chgco.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
+// ESATTAMENTE la stringa di connessione fornita, cambiando solo la password
+const MONGODB_URI = 'mongodb+srv://nicolamaraschi01:marase@cluster0.chgco.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
 
 // Configurazione CORS
 app.use(cors({
@@ -22,6 +25,55 @@ app.use(cors({
 
 // Middleware
 app.use(bodyParser.json());
+
+// Configurazione per il caricamento delle immagini
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const uploadDir = path.join(__dirname, 'uploads');
+    if (!fs.existsSync(uploadDir)){
+      fs.mkdirSync(uploadDir, { recursive: true });
+    }
+    cb(null, uploadDir);
+  },
+  filename: (req, file, cb) => {
+    cb(null, `${Date.now()}-${file.originalname}`);
+  }
+});
+
+const upload = multer({ 
+  storage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // limite 5MB
+  fileFilter: (req, file, cb) => {
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
+    if (!allowedTypes.includes(file.mimetype)) {
+      return cb(new Error('Formato file non supportato'), false);
+    }
+    cb(null, true);
+  }
+});
+
+// Rotta per l'upload delle immagini
+app.post('/api/upload', upload.single('image'), (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: 'Nessun file caricato' });
+    }
+    
+    // Crea URL per l'immagine caricata
+    const imageUrl = `/uploads/${req.file.filename}`;
+    
+    res.status(200).json({
+      message: 'Immagine caricata con successo',
+      imageUrl
+    });
+  } catch (error) {
+    console.error('Errore durante il caricamento dell\'immagine:', error);
+    res.status(500).json({ message: 'Errore durante il caricamento dell\'immagine' });
+  }
+});
+
+// Rende accessibili i file nella cartella uploads
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Connessione a MongoDB Atlas
 mongoose.connect(MONGODB_URI)
