@@ -11,7 +11,8 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import AddIcon from '@mui/icons-material/Add';
 import SearchIcon from '@mui/icons-material/Search';
 import FilterListIcon from '@mui/icons-material/FilterList';
-import SortIcon from '@mui/icons-material/Sort';
+import ReportProblemIcon from '@mui/icons-material/ReportProblem';
+import RefreshIcon from '@mui/icons-material/Refresh';
 
 const CarsList = () => {
   const [cars, setCars] = useState([]);
@@ -32,14 +33,28 @@ const CarsList = () => {
 
   const fetchCars = async () => {
     setLoading(true);
+    setError(null);
+    
     try {
       const response = await carService.getCars(currentPage, 10, { ...filters, search: searchTerm });
       setCars(response.data.cars);
       setTotalPages(response.data.pagination.totalPages);
     } catch (err) {
-      setError('Errore durante il caricamento delle auto');
-      toast.error('Errore durante il caricamento delle auto');
-      console.error(err);
+      console.error('Errore durante il caricamento delle auto:', err);
+      
+      if (err.code === 'ERR_NETWORK') {
+        setError('Impossibile connettersi al server. Verifica che il backend sia in esecuzione.');
+      } else if (err.response) {
+        // Errore con risposta dal server
+        setError(`Errore dal server: ${err.response.status} - ${err.response.data.message || 'Errore sconosciuto'}`);
+      } else {
+        // Altro tipo di errore
+        setError(`Errore: ${err.message || 'Si è verificato un errore durante il caricamento dei dati'}`);
+      }
+      
+      toast.error('Errore durante il caricamento delle auto', {
+        autoClose: 3000
+      });
     } finally {
       setLoading(false);
     }
@@ -87,8 +102,15 @@ const CarsList = () => {
         toast.success('Auto eliminata con successo');
         fetchCars();
       } catch (err) {
-        toast.error('Errore durante l\'eliminazione dell\'auto');
-        console.error(err);
+        console.error('Errore durante l\'eliminazione dell\'auto:', err);
+        
+        if (err.code === 'ERR_NETWORK') {
+          toast.error('Impossibile connettersi al server per eliminare l\'auto');
+        } else if (err.response) {
+          toast.error(`Errore durante l'eliminazione: ${err.response.data.message || 'Errore sconosciuto'}`);
+        } else {
+          toast.error('Errore durante l\'eliminazione dell\'auto');
+        }
       }
     }
   };
@@ -232,9 +254,25 @@ const CarsList = () => {
         {loading ? (
           <div className="loading-container">
             <div className="loading-spinner"></div>
+            <p className="mt-3 text-center">Caricamento in corso...</p>
           </div>
         ) : error ? (
-          <div className="alert alert-danger">{error}</div>
+          <div className="alert alert-danger">
+            <div className="d-flex align-items-center mb-3">
+              <ReportProblemIcon style={{ fontSize: 24, marginRight: '10px' }} />
+              <h5 className="mb-0">Si è verificato un errore</h5>
+            </div>
+            <p>{error}</p>
+            <div className="mt-3">
+              <button 
+                onClick={fetchCars} 
+                className="btn btn-outline-danger"
+              >
+                <RefreshIcon fontSize="small" className="me-2" />
+                Riprova
+              </button>
+            </div>
+          </div>
         ) : (
           <>
             <div className="table-container">
@@ -251,28 +289,27 @@ const CarsList = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {cars.length > 0 ? (
+                  {cars && cars.length > 0 ? (
                     cars.map((car) => (
                       <tr key={car._id}>
                         <td className="car-image-cell">
-                     
-                        <img
-                        src={car.image}
-                        alt={car.title}
-                        className="car-thumbnail"
-                        onError={(e) => {
-                            e.target.onerror = null;
-                            e.target.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="70" viewBox="0 0 100 70"><rect width="100" height="70" fill="%23f5f5f5"/><text x="50%" y="50%" font-family="Arial" font-size="12" fill="%23aaa" text-anchor="middle" dy=".3em">No Image</text></svg>';
-                        }}
-                        />
+                          <img
+                            src={car.image}
+                            alt={car.title}
+                            className="car-thumbnail"
+                            onError={(e) => {
+                              e.target.onerror = null;
+                              e.target.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="70" viewBox="0 0 100 70"><rect width="100" height="70" fill="%23f5f5f5"/><text x="50%" y="50%" font-family="Arial" font-size="12" fill="%23aaa" text-anchor="middle" dy=".3em">No Image</text></svg>';
+                            }}
+                          />
                         </td>
                         <td>{car.title}</td>
                         <td>{car.year}</td>
-                        <td>{car.mileage.toLocaleString('it-IT')} km</td>
+                        <td>{car.mileage ? car.mileage.toLocaleString('it-IT') : '0'} km</td>
                         <td>{formatPrice(car.price)}</td>
                         <td>
-                          <span className={`condition-badge ${car.condition.toLowerCase()}`}>
-                            {car.condition}
+                          <span className={`condition-badge ${(car.condition || '').toLowerCase()}`}>
+                            {car.condition || 'N/D'}
                           </span>
                         </td>
                         <td className="actions-cell">

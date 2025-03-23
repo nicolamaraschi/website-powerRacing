@@ -1,9 +1,11 @@
-import React, { useState, useContext } from 'react';
+// File: src/components/layout/Sidebar.js - Fixed version
+
+import React, { useState, useContext, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
 import './Sidebar.css';
 
-// Import degli icone
+// Import degli icone - make sure these imports are correct
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
@@ -18,6 +20,12 @@ const Sidebar = () => {
   const { logout } = useContext(AuthContext);
   const location = useLocation();
   const navigate = useNavigate();
+  const [isClient, setIsClient] = useState(false);
+
+  // Use useEffect to ensure we only render the full component client-side
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
@@ -32,25 +40,32 @@ const Sidebar = () => {
     return location.pathname === path || location.pathname.startsWith(path + '/');
   };
 
+  // Only render complete content when in client-side to avoid hydration issues
+  if (!isClient) {
+    return <div className="sidebar-placeholder"></div>;
+  }
+
   return (
     <>
-      <div className={`sidebar ${isOpen ? 'open' : 'closed'}`}>
+      <div key="sidebar" className={`sidebar ${isOpen ? 'open' : 'closed'}`}>
         <div className="sidebar-header">
           <div className="brand">
-                <img
-        src="/logo.png"
-        alt="Power Racing Logo"
-        className="brand-logo"
-        onError={(e) => {
-            e.target.onerror = null;
-            e.target.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40"><rect width="40" height="40" fill="%233498db"/><text x="50%" y="50%" font-family="Arial" font-size="16" fill="white" text-anchor="middle" dy=".3em">PR</text></svg>';
-        }}
-        />
+            <img
+              src="/logo.png"
+              alt="Power Racing Logo"
+              className="brand-logo"
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40"><rect width="40" height="40" fill="%233498db"/><text x="50%" y="50%" font-family="Arial" font-size="16" fill="white" text-anchor="middle" dy=".3em">PR</text></svg>';
+              }}
+            />
             <h2 className="brand-text">Power Racing</h2>
           </div>
-          <button className="toggle-button" onClick={toggleSidebar}>
-            {isOpen ? <CloseIcon /> : <MenuIcon />}
-          </button>
+          {isClient && (
+            <button className="toggle-button" onClick={toggleSidebar}>
+              {isOpen ? <CloseIcon /> : <MenuIcon />}
+            </button>
+          )}
         </div>
 
         <div className="sidebar-menu">
@@ -99,8 +114,8 @@ const Sidebar = () => {
         </div>
       </div>
 
-      {!isOpen && (
-        <div className="mobile-toggle">
+      {!isOpen && isClient && (
+        <div key="mobile-toggle" className="mobile-toggle">
           <button onClick={toggleSidebar}>
             <MenuIcon />
           </button>

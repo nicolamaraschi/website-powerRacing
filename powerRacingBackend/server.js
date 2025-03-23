@@ -1,69 +1,47 @@
+// powerRacingBackend/server.js
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
-const carRoutes = require('./routes/carRoutes');
+// Nel file server.js, modifica questa riga:
+const carRoutes = require('./routes/cars');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Sostituisci con la tua password reale
+const DB_PASSWORD = 'nicolamaraschi01';
+const MONGODB_URI = `mongodb+srv://nicolamaraschi01:${DB_PASSWORD}@cluster0.chgco.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`;
+
+// Configurazione CORS
+app.use(cors({
+  origin: ['http://localhost:3000', 'http://localhost:3001', 'http://192.168.1.94:3000', 'http://192.168.1.94:3001'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
 // Middleware
-app.use(cors());
 app.use(bodyParser.json());
 
-// Connessione a MongoDB
-mongoose.connect('mongodb://localhost:27017/powerRacing', { 
-  useNewUrlParser: true, 
-  useUnifiedTopology: true 
-})
-.then(() => console.log('MongoDB connected'))
-.catch(err => console.error('MongoDB connection error:', err));
-
-// Configurazione di multer per l'upload di file
-const storage = multer.diskStorage({
-  destination: function(req, file, cb) {
-    cb(null, 'uploads/');
-  },
-  filename: function(req, file, cb) {
-    cb(null, Date.now() + path.extname(file.originalname));
-  }
-});
-
-const upload = multer({ 
-  storage: storage,
-  limits: { fileSize: 5 * 1024 * 1024 }, // Limite di 5MB
-  fileFilter: function(req, file, cb) {
-    // Accetta solo immagini
-    if (!file.originalname.match(/\.(jpg|jpeg|png|webp)$/)) {
-      return cb(new Error('Solo i file immagine sono consentiti!'), false);
-    }
-    cb(null, true);
-  }
-});
-
-// Crea la cartella uploads se non esiste
-if (!fs.existsSync('./uploads')){
-  fs.mkdirSync('./uploads');
-}
-
-// Servi i file statici dalla cartella uploads
-app.use('/uploads', express.static('uploads'));
-
-// Rotta per l'upload delle immagini
-app.post('/api/upload', upload.single('image'), (req, res) => {
-  res.json({ 
-    imageUrl: `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}` 
+// Connessione a MongoDB Atlas
+mongoose.connect(MONGODB_URI)
+  .then(() => {
+    console.log('MongoDB Atlas connesso con successo');
+  })
+  .catch(err => {
+    console.error('Errore di connessione a MongoDB Atlas:', err);
   });
-});
 
 // Rotte per le auto
 app.use('/api/cars', carRoutes);
 
+// Rotta di test
+app.get('/api/test', (req, res) => {
+  res.json({ message: 'Server funzionante correttamente!' });
+});
+
 // Gestione errori 404
-app.use((req, res, next) => {
+app.use((req, res) => {
   res.status(404).json({ message: 'Risorsa non trovata' });
 });
 
@@ -75,5 +53,5 @@ app.use((err, req, res, next) => {
 
 // Avvio del server
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+  console.log(`Server in esecuzione sulla porta ${PORT}`);
 });

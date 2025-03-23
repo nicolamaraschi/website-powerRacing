@@ -1,18 +1,8 @@
+// powerRacingBackend/controllers/carController.js
 const Car = require('../models/Car');
 
-// Crea una nuova auto
-const createCar = async (req, res) => {
-  try {
-    const newCar = new Car(req.body);
-    const savedCar = await newCar.save();
-    res.status(201).json(savedCar);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
-};
-
 // Ottieni tutte le auto con paginazione e filtri
-const getAllCars = async (req, res) => {
+exports.getCars = async (req, res) => {
   try {
     const { page = 1, limit = 10, search, minPrice, maxPrice, minYear, maxYear, condition, fuelType } = req.query;
     
@@ -48,10 +38,10 @@ const getAllCars = async (req, res) => {
       query.fuelType = fuelType;
     }
     
-    // Esegui la query
+    // Esegui la query con paginazione
     const cars = await Car.find(query)
-      .limit(limit * 1)
-      .skip((page - 1) * limit)
+      .limit(parseInt(limit))
+      .skip((parseInt(page) - 1) * parseInt(limit))
       .sort({ createdAt: -1 });
     
     // Conta il totale dei documenti che soddisfano la query
@@ -63,16 +53,17 @@ const getAllCars = async (req, res) => {
         page: parseInt(page),
         limit: parseInt(limit),
         total,
-        totalPages: Math.ceil(total / limit)
+        totalPages: Math.ceil(total / parseInt(limit))
       }
     });
   } catch (err) {
+    console.error('Errore in getCars:', err);
     res.status(500).json({ message: err.message });
   }
 };
 
 // Ottieni un'auto specifica per ID
-const getCarById = async (req, res) => {
+exports.getCarById = async (req, res) => {
   try {
     const car = await Car.findById(req.params.id);
     if (!car) {
@@ -80,40 +71,54 @@ const getCarById = async (req, res) => {
     }
     res.json(car);
   } catch (err) {
+    console.error('Errore in getCarById:', err);
     res.status(500).json({ message: err.message });
   }
 };
 
-// Aggiorna un'auto per ID
-const updateCarById = async (req, res) => {
+// Crea una nuova auto
+exports.createCar = async (req, res) => {
   try {
-    const car = await Car.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+    const newCar = new Car(req.body);
+    const savedCar = await newCar.save();
+    res.status(201).json(savedCar);
+  } catch (err) {
+    console.error('Errore in createCar:', err);
+    res.status(400).json({ message: err.message });
+  }
+};
+
+// Aggiorna un'auto esistente
+exports.updateCar = async (req, res) => {
+  try {
+    const car = await Car.findByIdAndUpdate(req.params.id, req.body, { 
+      new: true, 
+      runValidators: true 
+    });
+    
     if (!car) {
       return res.status(404).json({ message: 'Auto non trovata' });
     }
+    
     res.json(car);
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error('Errore in updateCar:', err);
+    res.status(400).json({ message: err.message });
   }
 };
 
-// Elimina un'auto per ID
-const deleteCarById = async (req, res) => {
+// Elimina un'auto
+exports.deleteCar = async (req, res) => {
   try {
     const car = await Car.findByIdAndDelete(req.params.id);
+    
     if (!car) {
       return res.status(404).json({ message: 'Auto non trovata' });
     }
+    
     res.json({ message: 'Auto eliminata con successo' });
   } catch (err) {
+    console.error('Errore in deleteCar:', err);
     res.status(500).json({ message: err.message });
   }
-};
-
-module.exports = {
-  createCar,
-  getAllCars,
-  getCarById,
-  updateCarById,
-  deleteCarById,
 };

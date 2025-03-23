@@ -1,3 +1,5 @@
+// File: src/App.js - Updated ErrorBoundary and Error Handling
+
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
@@ -19,19 +21,24 @@ import PrivateRoute from './components/auth/PrivateRoute';
 
 import './App.css';
 
-// Componente ErrorBoundary per catturare gli errori
+// Improved ErrorBoundary component to handle DOM node issues
 class ErrorBoundary extends Component {
   constructor(props) {
     super(props);
-    this.state = { hasError: false };
+    this.state = { hasError: false, errorInfo: null };
   }
 
   static getDerivedStateFromError(error) {
+    // Update state so the next render will show the fallback UI
     return { hasError: true };
   }
 
   componentDidCatch(error, errorInfo) {
+    // Log the error to the console
     console.error("React Error Boundary caught an error:", error, errorInfo);
+    this.setState({ errorInfo: errorInfo });
+    
+    // You could also log the error to an error reporting service here
   }
 
   render() {
@@ -44,8 +51,9 @@ class ErrorBoundary extends Component {
           borderRadius: '5px' 
         }}>
           <h2>Qualcosa è andato storto.</h2>
+          <p>Si è verificato un errore nell'applicazione. Ricarica la pagina per continuare.</p>
           <button 
-            onClick={() => this.setState({ hasError: false })}
+            onClick={() => window.location.reload()}
             style={{
               padding: '10px 15px',
               backgroundColor: '#4a90e2',
@@ -55,7 +63,7 @@ class ErrorBoundary extends Component {
               cursor: 'pointer'
             }}
           >
-            Riprova
+            Ricarica Pagina
           </button>
         </div>
       );
@@ -64,6 +72,16 @@ class ErrorBoundary extends Component {
     return this.props.children;
   }
 }
+
+// Fix for text component issue - create a safer Text component
+const SafeText = ({ children, ...props }) => {
+  // This ensures we're not trying to render null or undefined
+  const safeChildren = children === null || children === undefined ? '' : children;
+  
+  return (
+    <span {...props}>{safeChildren}</span>
+  );
+};
 
 function App() {
   return (
@@ -93,4 +111,6 @@ function App() {
   );
 }
 
+// Export the SafeText component to use it elsewhere in the app
+export { SafeText };
 export default App;
