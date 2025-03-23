@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import './Navbar.css';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const location = useLocation();
 
   const handleToggle = () => {
     setIsOpen(!isOpen);
@@ -31,33 +32,49 @@ const Navbar = () => {
       </button>
       <div className={`collapse navbar-collapse ${isOpen ? 'show' : ''}`} id="navbarNav">
         <ul className="navbar-nav mx-auto">
-          <li className="nav-item active">
-            <Link className="nav-link" to="/" onClick={handleLinkClick}>
+          <li className="nav-item">
+            <Link 
+              className={`nav-link ${location.pathname === '/' ? 'active' : ''}`}
+              to="/" 
+              onClick={handleLinkClick}
+            >
               🏠 Home <span className="sr-only">(current)</span>
             </Link>
           </li>
+          {/* La voce "Chi siamo" è stata rimossa, dato che ora è parte della Home */}
           <li className="nav-item">
-            <Link className="nav-link" to="/chisiamo" onClick={handleLinkClick}>
-              👥 Chi siamo
-            </Link>
-          </li>
-          <li className="nav-item">
-            <Link className="nav-link" to="/servizi" onClick={handleLinkClick}>
+            <Link 
+              className={`nav-link ${location.pathname === '/servizi' ? 'active' : ''}`}
+              to="/servizi" 
+              onClick={handleLinkClick}
+            >
               💼 Servizi
             </Link>
           </li>
           <li className="nav-item">
-            <Link className="nav-link" to="/vetrina" onClick={handleLinkClick}>
+            <Link 
+              className={`nav-link ${location.pathname === '/vetrina' ? 'active' : ''}`}
+              to="/vetrina" 
+              onClick={handleLinkClick}
+            >
               🚗 Vetrina usato
             </Link>
           </li>
           <li className="nav-item">
-            <Link className="nav-link" to="/link" onClick={handleLinkClick}>
+            <Link 
+              className={`nav-link ${location.pathname === '/link' ? 'active' : ''}`}
+              to="/link" 
+              onClick={handleLinkClick}
+            >
               🔗 Link
             </Link>
           </li>
           <li className="nav-item">
-            <Link className="nav-link" to="/contatti" onClick={handleLinkClick}>
+            <Link 
+              className={`nav-link ${location.pathname === '/contatti' ? 'active' : ''}`}
+              to="/contatti" 
+              onClick={handleLinkClick}
+            >
               📞 Contatti
             </Link>
           </li>

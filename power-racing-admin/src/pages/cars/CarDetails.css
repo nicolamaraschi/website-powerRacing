@@ -1,0 +1,260 @@
+.car-details-page {
+    padding: 0;
+  }
+  
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  
+  .header-actions {
+    display: flex;
+    gap: 12px;
+  }
+  
+  .car-details-grid {
+    display: grid;
+    grid-template-columns: 3fr 2fr;
+    gap: 24px;
+  }
+  
+  .car-details-main {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  
+  .car-details-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  
+  .car-image-container {
+    width: 100%;
+    max-height: 500px;
+    overflow: hidden;
+    border-radius: 8px;
+    margin-bottom: 24px;
+  }
+  
+  .car-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .car-main-info {
+    padding: 0 16px;
+  }
+  
+  .car-price-container {
+    margin-bottom: 24px;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .car-price-label {
+    font-size: 0.875rem;
+    color: #666;
+    margin-bottom: 4px;
+  }
+  
+  .car-price {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #2c3e50;
+  }
+  
+  .car-description h3 {
+    font-size: 1.25rem;
+    margin-bottom: 12px;
+    color: #333;
+  }
+  
+  .car-description p {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #555;
+  }
+  
+  .car-spec-card h3, 
+  .car-details-card h3, 
+  .car-dates-card h3, 
+  .car-options-card h3, 
+  .car-contact-card h3 {
+    font-size: 1.2rem;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #e0e0e0;
+    color: #2c3e50;
+  }
+  
+  .car-specs-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .car-specs-list li {
+    display: flex;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  
+  .car-specs-list li:last-child {
+    border-bottom: none;
+  }
+  
+  .car-specs-list li svg {
+    color: #3498db;
+    margin-right: 12px;
+    font-size: 1.25rem;
+  }
+  
+  .spec-label {
+    flex: 1;
+    font-size: 0.9rem;
+    color: #666;
+  }
+  
+  .spec-value {
+    font-weight: 500;
+    color: #333;
+  }
+  
+  .condition-badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+    color: white;
+  }
+  
+  .condition-badge.usato {
+    background-color: #3498db;
+  }
+  
+  .condition-badge.nuovo {
+    background-color: #2ecc71;
+  }
+  
+  .condition-badge.km0 {
+    background-color: #9b59b6;
+  }
+  
+  .condition-badge.aziendale {
+    background-color: #f39c12;
+  }
+  
+  .detail-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+  
+  .detail-item {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .detail-label {
+    font-size: 0.8rem;
+    color: #666;
+    margin-bottom: 4px;
+  }
+  
+  .detail-value {
+    font-weight: 500;
+    color: #333;
+  }
+  
+  .options-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+  
+  .options-list li {
+    display: flex;
+    align-items: center;
+  }
+  
+  .options-list li svg {
+    color: #2ecc71;
+    margin-right: 8px;
+    font-size: 1rem;
+  }
+  
+  .no-options {
+    grid-column: span 2;
+    color: #666;
+    font-style: italic;
+  }
+  
+  .contact-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .contact-list li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  
+  .contact-list li:last-child {
+    margin-bottom: 0;
+  }
+  
+  .contact-list li svg {
+    color: #3498db;
+    margin-right: 12px;
+    font-size: 1.25rem;
+  }
+  
+  .error-container {
+    text-align: center;
+    padding: 40px 0;
+  }
+  
+  @media (max-width: 992px) {
+    .car-details-grid {
+      grid-template-columns: 1fr;
+    }
+    
+    .options-list {
+      grid-template-columns: 1fr;
+    }
+    
+    .no-options {
+      grid-column: span 1;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .page-header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    
+    .header-actions {
+      width: 100%;
+      justify-content: space-between;
+    }
+    
+    .detail-grid {
+      grid-template-columns: 1fr;
+    }
+  }

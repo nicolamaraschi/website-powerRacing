@@ -25,8 +25,9 @@ const CarSchema = new mongoose.Schema({
   contactInfo: {
     phone: { type: String, required: true }, // Numero di telefono per il contatto
     email: { type: String, required: true }, // Email per il contatto
-  }
-});
+  },
+  createdAt: { type: Date, default: Date.now }
+}, { timestamps: true });
 
 const Car = mongoose.model('Car', CarSchema);
 

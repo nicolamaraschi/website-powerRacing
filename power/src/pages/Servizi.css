@@ -1,56 +1,271 @@
-/* src/pages/Servizi.css */
+/* CSS per la Pagina Servizi migliorata */
 
-.service-box {
-    border: 1px solid #ddd;
-    border-radius: 8px;
-   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    background-color: #ffffff;
-      transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-       border: none; /* Rimuovi il bordo predefinito per un look più pulito */
-  }
-  
-  .service-box:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  }
-  
-  /* Titolo del servizio */
-  .service-box h3 {
-    margin: 20px 15px 10px;
-    font-size: 1.5rem;
-    font-family: 'Georgia', serif; /* Font serif per un aspetto più elegante */
-    color: #333;
+/* Hero Section */
+.servizi-hero {
+  background-color: #007bff;
+  background-image: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+  color: white;
+  padding: 80px 0;
+  margin-bottom: 30px;
+  border-radius: 0 0 10px 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
-  
-  /* Testo e lista del servizio */
-.service-box p, .service-box ul {
-    font-size: 1rem;
-    color: #666;
-    margin: 0 15px 15px;
-    font-family: 'Arial', sans-serif; /* Font sans-serif per leggibilità */
+
+.servizi-hero h1 {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 15px;
 }
-  
-  .service-box ul {
-    padding-left: 0;
-    list-style: none;
-  }
-  
-  .service-box ul li {
-    margin-bottom: 0.5rem;
-  }
-  
-  /* Immagine del servizio */
+
+.servizi-hero .lead {
+  font-size: 1.3rem;
+  font-weight: 300;
+}
+
+/* Section Title */
+.section-title {
+  position: relative;
+  margin-bottom: 30px;
+  font-weight: 700;
+  display: inline-block;
+}
+
+.section-title::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 0;
+  width: 80px;
+  height: 3px;
+  background-color: #007bff;
+}
+
+.text-center .section-title::after {
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* Service Cards */
+.service-card {
+  background-color: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  height: 100%;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.service-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+}
+
+.service-header {
+  padding: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.service-icon {
+  font-size: 2rem;
+  margin-right: 15px;
+}
+
+.service-header h3 {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
 .service-image {
-    width: 100%;
-    height: 180px;
-    object-fit: cover;
-    border-bottom: 4px solid #f5f5f5; /* Aggiunge una linea sottile sotto l'immagine */
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-top: 1px solid #f0f0f0;
+  border-bottom: 1px solid #f0f0f0;
 }
 
-  
-  @media (max-width: 768px) {
-    .service-box {
-      margin-bottom: 1rem;
-    }
+.service-content {
+  padding: 20px;
+}
+
+.service-content p {
+  color: #6c757d;
+  margin-bottom: 15px;
+}
+
+/* Service Details Toggle Button */
+.service-details-toggle {
+  background-color: transparent;
+  border: none;
+  color: #007bff;
+  padding: 0;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  transition: color 0.3s ease;
+}
+
+.service-details-toggle:hover {
+  color: #0056b3;
+  text-decoration: underline;
+}
+
+.service-details-toggle.active {
+  color: #0056b3;
+}
+
+.service-details-toggle:focus {
+  outline: none;
+}
+
+/* Service Details Section */
+.service-details {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.service-long-desc {
+  font-style: italic;
+  margin-bottom: 20px;
+}
+
+.service-details h4 {
+  margin-bottom: 15px;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.service-features {
+  padding-left: 20px;
+  margin-bottom: 20px;
+}
+
+.service-features li {
+  margin-bottom: 8px;
+  color: #495057;
+}
+
+/* Leasing Companies Section */
+.leasing-companies-section {
+  background-color: #f8f9fa;
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  margin-top: 50px;
+}
+
+.leasing-companies-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+  margin-top: 30px;
+}
+
+.leasing-company-card {
+  background-color: white;
+  padding: 15px;
+  border-radius: 8px;
+  text-align: center;
+  font-weight: 500;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.leasing-company-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* CTA Section */
+.cta-section {
+  background-color: #f8f9fa;
+  padding: 50px;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  margin-top: 50px;
+}
+
+.cta-section h2 {
+  margin-bottom: 15px;
+  font-weight: 700;
+}
+
+.cta-buttons {
+  margin-top: 25px;
+}
+
+/* Responsive Adjustments */
+@media (max-width: h992px) {
+  .servizi-hero {
+    padding: 60px 0;
   }
   
+  .servizi-hero h1 {
+    font-size: 2.5rem;
+  }
+  
+  .leasing-companies-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .servizi-hero {
+    padding: 50px 0;
+  }
+  
+  .servizi-hero h1 {
+    font-size: 2rem;
+  }
+  
+  .service-image {
+    height: 180px;
+  }
+  
+  .leasing-companies-section,
+  .cta-section {
+    padding: 30px;
+  }
+  
+  .leasing-companies-grid {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 15px;
+  }
+}
+
+@media (max-width: 576px) {
+  .servizi-hero {
+    padding: 40px 0;
+  }
+  
+  .servizi-hero h1 {
+    font-size: 1.75rem;
+  }
+  
+  .cta-buttons .btn {
+    display: block;
+    width: 100%;
+    margin-bottom: 10px;
+  }
+  
+  .cta-buttons .btn:last-child {
+    margin-left: 0 !important;
+  }
+  
+  .leasing-companies-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .service-header {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .service-icon {
+    margin-right: 0;
+    margin-bottom: 10px;
+  }
+}
