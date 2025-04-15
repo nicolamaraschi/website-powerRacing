@@ -1,7 +1,7 @@
-// File: src/services/carService.js
+// src/services/carService.js
 import axios from 'axios';
 
-const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5001/api';
 
 // Configurazione di Axios
 const axiosInstance = axios.create({
@@ -9,6 +9,7 @@ const axiosInstance = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  timeout: 10000 // 10 secondi di timeout
 });
 
 // Intercettore per aggiungere il token di autenticazione
@@ -25,7 +26,7 @@ axiosInstance.interceptors.request.use(
   }
 );
 
-// Servizio per la gestione delle auto - SOLO CHIAMATE API REALI
+// Servizio per la gestione delle auto
 const carService = {
   // Ottieni tutte le auto (con paginazione e filtri)
   getCars: async (page = 1, limit = 10, filters = {}) => {

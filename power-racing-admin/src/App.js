@@ -1,5 +1,4 @@
-// File: src/App.js - Updated ErrorBoundary and Error Handling
-
+// power-racing-admin/src/App.js
 import React, { Component } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
@@ -37,8 +36,6 @@ class ErrorBoundary extends Component {
     // Log the error to the console
     console.error("React Error Boundary caught an error:", error, errorInfo);
     this.setState({ errorInfo: errorInfo });
-    
-    // You could also log the error to an error reporting service here
   }
 
   render() {

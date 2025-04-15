@@ -69,6 +69,16 @@ const Navbar = () => {
               🔗 Link
             </Link>
           </li>
+         
+        <li className="nav-item">
+          <Link 
+            className={`nav-link ${location.pathname === '/richiedi-preventivo' ? 'active' : ''}`}
+            to="/richiedi-preventivo" 
+            onClick={handleLinkClick}
+          >
+            🔧 Richiedi Preventivo
+          </Link>
+        </li>
           <li className="nav-item">
             <Link 
               className={`nav-link ${location.pathname === '/contatti' ? 'active' : ''}`}

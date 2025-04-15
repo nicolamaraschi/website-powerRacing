@@ -1,109 +1,36 @@
+// src/pages/cars/CarForm.js
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Formik, Form, Field, ErrorMessage, FieldArray } from 'formik';
-import * as Yup from 'yup';
-import { toast } from 'react-toastify';
-import carService from '../../services/carService';
+import axios from 'axios';
 import './CarForm.css';
 
 // Icone
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import SaveIcon from '@mui/icons-material/Save';
-import AddIcon from '@mui/icons-material/Add';
-import DeleteIcon from '@mui/icons-material/Delete';
 import ImageIcon from '@mui/icons-material/Image';
 
 const CarForm = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [car, setCar] = useState(null);
   const [loading, setLoading] = useState(id ? true : false);
-  const [imagePreview, setImagePreview] = useState(null);
-  const [formError, setFormError] = useState(null);
-  const isEditMode = !!id;
-
-  // Carica i dettagli dell'auto se in modalità modifica
-  useEffect(() => {
-    if (isEditMode) {
-      const fetchCar = async () => {
-        try {
-          const response = await carService.getCarById(id);
-          setCar(response.data);
-          setImagePreview(response.data.image);
-        } catch (error) {
-          toast.error('Errore nel caricamento delle informazioni dell\'auto');
-          console.error(error);
-          navigate('/cars');
-        } finally {
-          setLoading(false);
-        }
-      };
-
-      fetchCar();
-    }
-  }, [id, isEditMode, navigate]);
-
-  // Schema di validazione con Yup
-  const validationSchema = Yup.object({
-    title: Yup.string().required('Titolo richiesto'),
-    description: Yup.string().required('Descrizione richiesta'),
-    mileage: Yup.number()
-      .required('Chilometraggio richiesto')
-      .min(0, 'Il chilometraggio non può essere negativo'),
-    year: Yup.number()
-      .required('Anno richiesto')
-      .min(1900, 'Anno non valido')
-      .max(new Date().getFullYear() + 1, 'Anno non valido'),
-    price: Yup.number()
-      .required('Prezzo richiesto')
-      .min(0, 'Il prezzo non può essere negativo'),
-    fuelType: Yup.string().required('Tipo di carburante richiesto'),
-    engineSize: Yup.number()
-      .required('Cilindrata richiesta')
-      .min(0, 'La cilindrata non può essere negativa'),
-    power: Yup.number()
-      .required('Potenza richiesta')
-      .min(0, 'La potenza non può essere negativa'),
-    transmission: Yup.string().required('Tipo di trasmissione richiesto'),
-    drivetrain: Yup.string().required('Tipo di trazione richiesto'),
-    doors: Yup.number()
-      .required('Numero di porte richiesto')
-      .min(1, 'Il numero di porte deve essere almeno 1'),
-    seats: Yup.number()
-      .required('Numero di posti richiesto')
-      .min(1, 'Il numero di posti deve essere almeno 1'),
-    color: Yup.string().required('Colore richiesto'),
-    condition: Yup.string().required('Condizione richiesta'),
-    owners: Yup.number()
-      .required('Numero di proprietari richiesto')
-      .min(0, 'Il numero di proprietari non può essere negativo'),
-    registrationDate: Yup.date().required('Data di immatricolazione richiesta'),
-    location: Yup.string().required('Posizione richiesta'),
-    'contactInfo.phone': Yup.string().required('Numero di telefono richiesto'),
-    'contactInfo.email': Yup.string()
-      .email('Email non valida')
-      .required('Email richiesta'),
-  });
-
-  // Valori iniziali del form
-  const initialValues = {
+  const [formData, setFormData] = useState({
     title: '',
     description: '',
-    mileage: '',
+    mileage: 0,
     year: new Date().getFullYear(),
-    price: '',
-    fuelType: '',
-    engineSize: '',
-    power: '',
+    price: 0,
+    fuelType: 'Benzina',
+    engineSize: 1000,
+    power: 100,
     transmission: 'Manuale',
     drivetrain: 'Anteriore',
     doors: 5,
     seats: 5,
-    color: '',
+    color: 'Bianco',
     condition: 'Usato',
     owners: 1,
     registrationDate: new Date().toISOString().split('T')[0],
-    image: '',
+    image: 'https://via.placeholder.com/800x600?text=Auto',
     location: 'Milano',
     inspectionValidUntil: '',
     insuranceValidUntil: '',
@@ -112,54 +39,150 @@ const CarForm = () => {
       phone: '+39 02 48302847',
       email: 'info@powerracing.it',
     },
+  });
+  const [imagePreview, setImagePreview] = useState(null);
+  const [errors, setErrors] = useState({});
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const isEditMode = !!id;
+  
+  const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5001/api';
+
+  // Carica i dettagli dell'auto se in modalità modifica
+  useEffect(() => {
+    if (isEditMode) {
+      const fetchCar = async () => {
+        try {
+          setLoading(true);
+          const response = await axios.get(`${API_URL}/cars/${id}`);
+          setFormData(response.data);
+          setImagePreview(response.data.image);
+          setLoading(false);
+        } catch (error) {
+          console.error('Errore nel caricamento delle informazioni dell\'auto:', error);
+          alert('Errore nel caricamento delle informazioni dell\'auto');
+          setLoading(false);
+          navigate('/cars');
+        }
+      };
+
+      fetchCar();
+    }
+  }, [id, isEditMode, navigate, API_URL]);
+
+  // Imposta anteprima immagine quando formData.image cambia
+  useEffect(() => {
+    if (formData.image) {
+      setImagePreview(formData.image);
+    }
+  }, [formData.image]);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    
+    // Gestisce campi nidificati come contactInfo.phone
+    if (name.includes('.')) {
+      const [parent, child] = name.split('.');
+      setFormData(prev => ({
+        ...prev,
+        [parent]: {
+          ...prev[parent],
+          [child]: value
+        }
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        [name]: value
+      }));
+    }
   };
 
   // Gestione upload immagine
-  const handleImageUpload = async (e, setFieldValue) => {
+  const handleImageUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
     const validImageTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'];
     if (!validImageTypes.includes(file.type)) {
-      toast.error('Formato immagine non supportato. Utilizzare JPEG, PNG o WebP');
+      alert('Formato immagine non supportato. Utilizzare JPEG, PNG o WebP');
       return;
     }
 
     if (file.size > 5 * 1024 * 1024) {
-      toast.error('L\'immagine non può superare i 5MB');
+      alert('L\'immagine non può superare i 5MB');
       return;
     }
 
     try {
-      // In un'applicazione reale, qui viene caricata l'immagine al backend
-      const response = await carService.uploadImage(file);
+      setUploadingImage(true);
+      
+      const formData = new FormData();
+      formData.append('image', file);
+      
+      const response = await axios.post(`${API_URL}/upload`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      
+      setFormData(prev => ({
+        ...prev,
+        image: response.data.imageUrl
+      }));
+      
       setImagePreview(response.data.imageUrl);
-      setFieldValue('image', response.data.imageUrl);
+      setUploadingImage(false);
     } catch (error) {
-      toast.error('Errore durante il caricamento dell\'immagine');
-      console.error(error);
+      console.error('Errore durante il caricamento dell\'immagine:', error);
+      alert('Errore durante il caricamento dell\'immagine');
+      setUploadingImage(false);
     }
   };
 
-  // Gestione invio form
-  const handleSubmit = async (values, { setSubmitting }) => {
-    setFormError(null);
+  const validateForm = () => {
+    const newErrors = {};
+    
+    // Validazione campi obbligatori
+    if (!formData.title.trim()) newErrors.title = 'Titolo richiesto';
+    if (!formData.description.trim()) newErrors.description = 'Descrizione richiesta';
+    if (!formData.fuelType) newErrors.fuelType = 'Tipo di carburante richiesto';
+    if (!formData.color.trim()) newErrors.color = 'Colore richiesto';
+    if (!formData.location.trim()) newErrors.location = 'Localizzazione richiesta';
+    if (!formData.registrationDate) newErrors.registrationDate = 'Data di immatricolazione richiesta';
+    
+    // Validazione contatti
+    if (!formData.contactInfo.phone) newErrors['contactInfo.phone'] = 'Telefono richiesto';
+    if (!formData.contactInfo.email) newErrors['contactInfo.email'] = 'Email richiesta';
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    // Validazione lato client
+    if (!validateForm()) {
+      alert('Completa tutti i campi obbligatori');
+      return;
+    }
+    
+    setLoading(true);
+    
     try {
       if (isEditMode) {
-        await carService.updateCar(id, values);
-        toast.success('Auto aggiornata con successo');
+        await axios.put(`${API_URL}/cars/${id}`, formData);
+        alert('Auto aggiornata con successo');
       } else {
-        await carService.createCar(values);
-        toast.success('Auto aggiunta con successo');
+        await axios.post(`${API_URL}/cars`, formData);
+        alert('Auto aggiunta con successo');
       }
       navigate('/cars');
     } catch (error) {
-      setFormError('Errore durante il salvataggio. Riprova.');
-      toast.error('Errore durante il salvataggio');
-      console.error(error);
+      console.error('Errore durante il salvataggio:', error);
+      alert('Errore durante il salvataggio. Riprova.');
     } finally {
-      setSubmitting(false);
+      setLoading(false);
     }
   };
 
@@ -167,6 +190,7 @@ const CarForm = () => {
     return (
       <div className="loading-container">
         <div className="loading-spinner"></div>
+        <p>Caricamento in corso...</p>
       </div>
     );
   }
@@ -175,361 +199,390 @@ const CarForm = () => {
     <div className="car-form-page">
       <div className="page-header">
         <h1>{isEditMode ? 'Modifica Auto' : 'Aggiungi Auto'}</h1>
-        <button onClick={() => navigate('/cars')} className="btn btn-secondary">
+        <button 
+          onClick={() => navigate('/cars')} 
+          className="btn btn-secondary"
+          type="button"
+        >
           <ArrowBackIcon /> Torna alla lista
         </button>
       </div>
 
       <div className="card">
-        <Formik
-          initialValues={car || initialValues}
-          validationSchema={validationSchema}
-          onSubmit={handleSubmit}
-          enableReinitialize
-        >
-          {({ isSubmitting, setFieldValue, values }) => (
-            <Form className="car-form">
-              {formError && <div className="alert alert-danger">{formError}</div>}
+        <form onSubmit={handleSubmit} className="car-form">
+          <div className="form-sections">
+            {/* Informazioni Principali */}
+            <div className="form-section">
+              <h2 className="section-title">Informazioni Principali</h2>
+              
+              <div className="form-row">
+                <div className="form-group">
+                  <label htmlFor="title">Marca e Modello*</label>
+                  <input
+                    type="text"
+                    id="title"
+                    name="title"
+                    value={formData.title}
+                    onChange={handleChange}
+                    className={`form-control ${errors.title ? 'is-invalid' : ''}`}
+                  />
+                  {errors.title && <div className="error-feedback">{errors.title}</div>}
+                </div>
+              </div>
 
-              <div className="form-sections">
-                <div className="form-section">
-                  <h2 className="section-title">Informazioni Principali</h2>
-                  
-                  <div className="form-row">
-                    <div className="form-group">
-                      <label htmlFor="title">Marca e Modello</label>
-                      <Field name="title" id="title" className="form-control" />
-                      <ErrorMessage name="title" component="div" className="error-feedback" />
-                    </div>
-                  </div>
+              <div className="form-row">
+                <div className="form-group">
+                  <label htmlFor="description">Descrizione*</label>
+                  <textarea
+                    id="description"
+                    name="description"
+                    value={formData.description}
+                    onChange={handleChange}
+                    className={`form-control ${errors.description ? 'is-invalid' : ''}`}
+                    rows="4"
+                  ></textarea>
+                  {errors.description && <div className="error-feedback">{errors.description}</div>}
+                </div>
+              </div>
 
-                  <div className="form-row">
-                    <div className="form-group">
-                      <label htmlFor="description">Descrizione</label>
-                      <Field
-                        as="textarea"
-                        name="description"
-                        id="description"
-                        className="form-control"
-                        rows="4"
-                      />
-                      <ErrorMessage name="description" component="div" className="error-feedback" />
-                    </div>
-                  </div>
+              <div className="form-row">
+                <div className="form-group">
+                  <label htmlFor="price">Prezzo (€)*</label>
+                  <input
+                    type="number"
+                    id="price"
+                    name="price"
+                    value={formData.price}
+                    onChange={handleChange}
+                    className={`form-control ${errors.price ? 'is-invalid' : ''}`}
+                  />
+                  {errors.price && <div className="error-feedback">{errors.price}</div>}
+                </div>
+              </div>
 
-                  <div className="form-row">
-                    <div className="form-group">
-                      <label htmlFor="price">Prezzo (€)</label>
-                      <Field
-                        type="number"
-                        name="price"
-                        id="price"
-                        className="form-control"
-                      />
-                      <ErrorMessage name="price" component="div" className="error-feedback" />
-                    </div>
-                  </div>
+              <div className="form-row cols-3">
+                <div className="form-group">
+                  <label htmlFor="condition">Condizione*</label>
+                  <select 
+                    id="condition" 
+                    name="condition" 
+                    value={formData.condition}
+                    onChange={handleChange}
+                    className="form-control"
+                  >
+                    <option value="Nuovo">Nuovo</option>
+                    <option value="Usato">Usato</option>
+                    <option value="Km0">Km0</option>
+                    <option value="Aziendale">Aziendale</option>
+                  </select>
+                </div>
 
-                  <div className="form-row cols-3">
-                    <div className="form-group">
-                      <label htmlFor="condition">Condizione</label>
-                      <Field as="select" name="condition" id="condition" className="form-control">
-                        <option value="Nuovo">Nuovo</option>
-                        <option value="Usato">Usato</option>
-                        <option value="Km0">Km0</option>
-                        <option value="Aziendale">Aziendale</option>
-                      </Field>
-                      <ErrorMessage name="condition" component="div" className="error-feedback" />
-                    </div>
+                <div className="form-group">
+                  <label htmlFor="year">Anno*</label>
+                  <input
+                    type="number"
+                    id="year"
+                    name="year"
+                    value={formData.year}
+                    onChange={handleChange}
+                    className="form-control"
+                  />
+                </div>
 
-                    <div className="form-group">
-                      <label htmlFor="year">Anno</label>
-                      <Field
-                        type="number"
-                        name="year"
-                        id="year"
-                        className="form-control"
-                      />
-                      <ErrorMessage name="year" component="div" className="error-feedback" />
-                    </div>
+                <div className="form-group">
+                  <label htmlFor="mileage">Chilometraggio*</label>
+                  <input
+                    type="number"
+                    id="mileage"
+                    name="mileage"
+                    value={formData.mileage}
+                    onChange={handleChange}
+                    className="form-control"
+                  />
+                </div>
+              </div>
 
-                    <div className="form-group">
-                      <label htmlFor="mileage">Chilometraggio</label>
-                      <Field
-                        type="number"
-                        name="mileage"
-                        id="mileage"
-                        className="form-control"
-                      />
-                      <ErrorMessage name="mileage" component="div" className="error-feedback" />
-                    </div>
-                  </div>
-
-                  <div className="form-row">
-                    <div className="form-group image-upload-group">
-                      <label>Immagine</label>
-                      <div className="image-upload-container">
-                        {imagePreview ? (
-                          <div className="image-preview">
-                            <img src={imagePreview} alt="Anteprima" />
-                          </div>
-                        ) : (
-                          <div className="image-placeholder">
-                            <ImageIcon />
-                            <span>Nessuna immagine</span>
-                          </div>
-                        )}
-                        <div className="image-upload-controls">
-                          <input
-                            type="file"
-                            id="image-upload"
-                            accept="image/*"
-                            onChange={(e) => handleImageUpload(e, setFieldValue)}
-                            className="image-upload-input"
-                          />
-                          <label htmlFor="image-upload" className="btn btn-secondary">
-                            Seleziona immagine
-                          </label>
-                        </div>
+              {/* Sezione upload immagine */}
+              <div className="form-row">
+                <div className="form-group image-upload-group">
+                  <label>Immagine</label>
+                  <div className="image-upload-container">
+                    {imagePreview ? (
+                      <div className="image-preview">
+                        <img src={imagePreview} alt="Anteprima" style={{ maxWidth: '100%', maxHeight: '200px' }} />
                       </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="form-section">
-                  <h2 className="section-title">Specifiche Tecniche</h2>
-
-                  <div className="form-row cols-3">
-                    <div className="form-group">
-                      <label htmlFor="fuelType">Carburante</label>
-                      <Field as="select" name="fuelType" id="fuelType" className="form-control">
-                        <option value="">Seleziona...</option>
-                        <option value="Benzina">Benzina</option>
-                        <option value="Diesel">Diesel</option>
-                        <option value="GPL">GPL</option>
-                        <option value="Metano">Metano</option>
-                        <option value="Elettrico">Elettrico</option>
-                        <option value="Ibrido">Ibrido</option>
-                      </Field>
-                      <ErrorMessage name="fuelType" component="div" className="error-feedback" />
-                    </div>
-
-                    <div className="form-group">
-                      <label htmlFor="engineSize">Cilindrata (cc)</label>
-                      <Field
-                        type="number"
-                        name="engineSize"
-                        id="engineSize"
-                        className="form-control"
+                    ) : (
+                      <div className="image-placeholder">
+                        <ImageIcon />
+                        <span>Nessuna immagine</span>
+                      </div>
+                    )}
+                    <div className="image-upload-controls">
+                      <input
+                        type="file"
+                        id="image-upload"
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                        className="image-upload-input"
+                        style={{ display: 'none' }}
                       />
-                      <ErrorMessage name="engineSize" component="div" className="error-feedback" />
-                    </div>
-
-                    <div className="form-group">
-                      <label htmlFor="power">Potenza (CV)</label>
-                      <Field
-                        type="number"
-                        name="power"
-                        id="power"
-                        className="form-control"
-                      />
-                      <ErrorMessage name="power" component="div" className="error-feedback" />
-                    </div>
-                  </div>
-
-                  <div className="form-row cols-3">
-                    <div className="form-group">
-                      <label htmlFor="transmission">Trasmissione</label>
-                      <Field as="select" name="transmission" id="transmission" className="form-control">
-                        <option value="Manuale">Manuale</option>
-                        <option value="Automatico">Automatico</option>
-                        <option value="Semiautomatico">Semiautomatico</option>
-                      </Field>
-                      <ErrorMessage name="transmission" component="div" className="error-feedback" />
-                    </div>
-
-                    <div className="form-group">
-                      <label htmlFor="drivetrain">Trazione</label>
-                      <Field as="select" name="drivetrain" id="drivetrain" className="form-control">
-                        <option value="Anteriore">Anteriore</option>
-                        <option value="Posteriore">Posteriore</option>
-                        <option value="Integrale">Integrale</option>
-                      </Field>
-                      <ErrorMessage name="drivetrain" component="div" className="error-feedback" />
-                    </div>
-
-                    <div className="form-group">
-                      <label htmlFor="color">Colore</label>
-                      <Field name="color" id="color" className="form-control" />
-                      <ErrorMessage name="color" component="div" className="error-feedback" />
-                    </div>
-                  </div>
-
-                  <div className="form-row cols-2">
-                    <div className="form-group">
-                      <label htmlFor="doors">Porte</label>
-                      <Field
-                        type="number"
-                        name="doors"
-                        id="doors"
-                        className="form-control"
-                      />
-                      <ErrorMessage name="doors" component="div" className="error-feedback" />
-                    </div>
-
-                    <div className="form-group">
-                      <label htmlFor="seats">Posti</label>
-                      <Field
-                        type="number"
-                        name="seats"
-                        id="seats"
-                        className="form-control"
-                      />
-                      <ErrorMessage name="seats" component="div" className="error-feedback" />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="form-section">
-                  <h2 className="section-title">Dettagli Aggiuntivi</h2>
-
-                  <div className="form-row cols-2">
-                    <div className="form-group">
-                      <label htmlFor="owners">Numero Proprietari</label>
-                      <Field
-                        type="number"
-                        name="owners"
-                        id="owners"
-                        className="form-control"
-                      />
-                      <ErrorMessage name="owners" component="div" className="error-feedback" />
-                    </div>
-
-                    <div className="form-group">
-                      <label htmlFor="location">Località</label>
-                      <Field name="location" id="location" className="form-control" />
-                      <ErrorMessage name="location" component="div" className="error-feedback" />
-                    </div>
-                  </div>
-
-                  <div className="form-row cols-3">
-                    <div className="form-group">
-                      <label htmlFor="registrationDate">Data di Immatricolazione</label>
-                      <Field
-                        type="date"
-                        name="registrationDate"
-                        id="registrationDate"
-                        className="form-control"
-                      />
-                      <ErrorMessage name="registrationDate" component="div" className="error-feedback" />
-                    </div>
-
-                    <div className="form-group">
-                      <label htmlFor="inspectionValidUntil">Revisione Valida Fino</label>
-                      <Field
-                        type="date"
-                        name="inspectionValidUntil"
-                        id="inspectionValidUntil"
-                        className="form-control"
-                      />
-                      <ErrorMessage name="inspectionValidUntil" component="div" className="error-feedback" />
-                    </div>
-
-                    <div className="form-group">
-                      <label htmlFor="insuranceValidUntil">Assicurazione Valida Fino</label>
-                      <Field
-                        type="date"
-                        name="insuranceValidUntil"
-                        id="insuranceValidUntil"
-                        className="form-control"
-                      />
-                      <ErrorMessage name="insuranceValidUntil" component="div" className="error-feedback" />
-                    </div>
-                  </div>
-
-                  <div className="form-row">
-                    <div className="form-group">
-                      <label>Optional</label>
-                      <FieldArray name="options">
-                        {({ remove, push }) => (
-                          <div>
-                            {values.options.length > 0 &&
-                              values.options.map((option, index) => (
-                                <div className="option-item" key={index}>
-                                  <Field
-                                    name={`options.${index}`}
-                                    className="form-control"
-                                    placeholder="Aggiungi un optional..."
-                                  />
-                                  <button
-                                    type="button"
-                                    className="btn-icon"
-                                    onClick={() => remove(index)}
-                                  >
-                                    <DeleteIcon />
-                                  </button>
-                                </div>
-                              ))}
-                            <button
-                              type="button"
-                              className="btn btn-secondary btn-add-option"
-                              onClick={() => push('')}
-                            >
-                              <AddIcon /> Aggiungi Optional
-                            </button>
-                          </div>
-                        )}
-                      </FieldArray>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="form-section">
-                  <h2 className="section-title">Informazioni di Contatto</h2>
-
-                  <div className="form-row cols-2">
-                    <div className="form-group">
-                      <label htmlFor="contactInfo.phone">Telefono</label>
-                      <Field name="contactInfo.phone" id="contactInfo.phone" className="form-control" />
-                      <ErrorMessage name="contactInfo.phone" component="div" className="error-feedback" />
-                    </div>
-
-                    <div className="form-group">
-                      <label htmlFor="contactInfo.email">Email</label>
-                      <Field
-                        type="email"
-                        name="contactInfo.email"
-                        id="contactInfo.email"
-                        className="form-control"
-                      />
-                      <ErrorMessage name="contactInfo.email" component="div" className="error-feedback" />
+                      <label htmlFor="image-upload" className="btn btn-secondary">
+                        {uploadingImage ? 'Caricamento...' : 'Seleziona immagine'}
+                      </label>
                     </div>
                   </div>
                 </div>
               </div>
+            </div>
 
-              <div className="form-actions">
-                <button
-                  type="button"
-                  onClick={() => navigate('/cars')}
-                  className="btn btn-secondary"
-                  disabled={isSubmitting}
-                >
-                  Annulla
-                </button>
-                <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
-                  {isSubmitting ? (
-                    <span className="loading-spinner small"></span>
-                  ) : (
-                    <>
-                      <SaveIcon /> {isEditMode ? 'Aggiorna Auto' : 'Salva Auto'}
-                    </>
-                  )}
-                </button>
+            {/* Specifiche tecniche */}
+            <div className="form-section">
+              <h2 className="section-title">Specifiche Tecniche</h2>
+
+              <div className="form-row cols-3">
+                <div className="form-group">
+                  <label htmlFor="fuelType">Carburante*</label>
+                  <select 
+                    id="fuelType" 
+                    name="fuelType" 
+                    value={formData.fuelType}
+                    onChange={handleChange}
+                    className={`form-control ${errors.fuelType ? 'is-invalid' : ''}`}
+                  >
+                    <option value="">Seleziona...</option>
+                    <option value="Benzina">Benzina</option>
+                    <option value="Diesel">Diesel</option>
+                    <option value="GPL">GPL</option>
+                    <option value="Metano">Metano</option>
+                    <option value="Elettrico">Elettrico</option>
+                    <option value="Ibrido">Ibrido</option>
+                  </select>
+                  {errors.fuelType && <div className="error-feedback">{errors.fuelType}</div>}
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="engineSize">Cilindrata (cc)*</label>
+                  <input
+                    type="number"
+                    id="engineSize"
+                    name="engineSize"
+                    value={formData.engineSize}
+                    onChange={handleChange}
+                    className="form-control"
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="power">Potenza (CV)*</label>
+                  <input
+                    type="number"
+                    id="power"
+                    name="power"
+                    value={formData.power}
+                    onChange={handleChange}
+                    className="form-control"
+                  />
+                </div>
               </div>
-            </Form>
-          )}
-        </Formik>
+
+              <div className="form-row cols-3">
+                <div className="form-group">
+                  <label htmlFor="transmission">Trasmissione*</label>
+                  <select 
+                    id="transmission" 
+                    name="transmission" 
+                    value={formData.transmission}
+                    onChange={handleChange}
+                    className="form-control"
+                  >
+                    <option value="Manuale">Manuale</option>
+                    <option value="Automatico">Automatico</option>
+                    <option value="Semiautomatico">Semiautomatico</option>
+                  </select>
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="drivetrain">Trazione*</label>
+                  <select 
+                    id="drivetrain" 
+                    name="drivetrain" 
+                    value={formData.drivetrain}
+                    onChange={handleChange}
+                    className="form-control"
+                  >
+                    <option value="Anteriore">Anteriore</option>
+                    <option value="Posteriore">Posteriore</option>
+                    <option value="Integrale">Integrale</option>
+                  </select>
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="color">Colore*</label>
+                  <input
+                    type="text"
+                    id="color"
+                    name="color"
+                    value={formData.color}
+                    onChange={handleChange}
+                    className={`form-control ${errors.color ? 'is-invalid' : ''}`}
+                  />
+                  {errors.color && <div className="error-feedback">{errors.color}</div>}
+                </div>
+              </div>
+
+              <div className="form-row cols-2">
+                <div className="form-group">
+                  <label htmlFor="doors">Porte*</label>
+                  <input
+                    type="number"
+                    id="doors"
+                    name="doors"
+                    value={formData.doors}
+                    onChange={handleChange}
+                    className="form-control"
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="seats">Posti*</label>
+                  <input
+                    type="number"
+                    id="seats"
+                    name="seats"
+                    value={formData.seats}
+                    onChange={handleChange}
+                    className="form-control"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Dettagli Aggiuntivi */}
+            <div className="form-section">
+              <h2 className="section-title">Dettagli Aggiuntivi</h2>
+
+              <div className="form-row cols-2">
+                <div className="form-group">
+                  <label htmlFor="owners">Numero Proprietari*</label>
+                  <input
+                    type="number"
+                    id="owners"
+                    name="owners"
+                    value={formData.owners}
+                    onChange={handleChange}
+                    className="form-control"
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="location">Località*</label>
+                  <input
+                    type="text"
+                    id="location"
+                    name="location"
+                    value={formData.location}
+                    onChange={handleChange}
+                    className={`form-control ${errors.location ? 'is-invalid' : ''}`}
+                  />
+                  {errors.location && <div className="error-feedback">{errors.location}</div>}
+                </div>
+              </div>
+
+              <div className="form-row cols-3">
+                <div className="form-group">
+                  <label htmlFor="registrationDate">Data di Immatricolazione*</label>
+                  <input
+                    type="date"
+                    id="registrationDate"
+                    name="registrationDate"
+                    value={formData.registrationDate}
+                    onChange={handleChange}
+                    className={`form-control ${errors.registrationDate ? 'is-invalid' : ''}`}
+                  />
+                  {errors.registrationDate && <div className="error-feedback">{errors.registrationDate}</div>}
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="inspectionValidUntil">Revisione Valida Fino</label>
+                  <input
+                    type="date"
+                    id="inspectionValidUntil"
+                    name="inspectionValidUntil"
+                    value={formData.inspectionValidUntil || ''}
+                    onChange={handleChange}
+                    className="form-control"
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="insuranceValidUntil">Assicurazione Valida Fino</label>
+                  <input
+                    type="date"
+                    id="insuranceValidUntil"
+                    name="insuranceValidUntil"
+                    value={formData.insuranceValidUntil || ''}
+                    onChange={handleChange}
+                    className="form-control"
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Informazioni di Contatto */}
+            <div className="form-section">
+              <h2 className="section-title">Informazioni di Contatto</h2>
+
+              <div className="form-row cols-2">
+                <div className="form-group">
+                  <label htmlFor="contactInfo.phone">Telefono*</label>
+                  <input
+                    type="text"
+                    id="contactInfo.phone"
+                    name="contactInfo.phone"
+                    value={formData.contactInfo.phone}
+                    onChange={handleChange}
+                    className={`form-control ${errors['contactInfo.phone'] ? 'is-invalid' : ''}`}
+                  />
+                  {errors['contactInfo.phone'] && <div className="error-feedback">{errors['contactInfo.phone']}</div>}
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="contactInfo.email">Email*</label>
+                  <input
+                    type="email"
+                    id="contactInfo.email"
+                    name="contactInfo.email"
+                    value={formData.contactInfo.email}
+                    onChange={handleChange}
+                    className={`form-control ${errors['contactInfo.email'] ? 'is-invalid' : ''}`}
+                  />
+                  {errors['contactInfo.email'] && <div className="error-feedback">{errors['contactInfo.email']}</div>}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="form-actions">
+            <button
+              type="button"
+              onClick={() => navigate('/cars')}
+              className="btn btn-secondary"
+            >
+              Annulla
+            </button>
+            <button 
+              type="submit" 
+              className="btn btn-primary"
+              disabled={loading || uploadingImage}
+            >
+              {loading ? (
+                <span>Salvataggio in corso...</span>
+              ) : (
+                <span><SaveIcon /> {isEditMode ? 'Aggiorna Auto' : 'Salva Auto'}</span>
+              )}
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );

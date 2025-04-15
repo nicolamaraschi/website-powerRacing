@@ -27,6 +27,12 @@ const Sidebar = () => {
     setIsClient(true);
   }, []);
 
+  // Renderizzazione condizionale sicura
+  if (!isClient) {
+    // Versione semplificata durante SSR
+    return <div className="sidebar-placeholder"></div>;
+  }
+
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
   };

@@ -1,68 +1,36 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
-import { toast } from 'react-toastify';
+import { useParams, Link } from 'react-router-dom';
 import carService from '../../services/carService';
-import './CarDetails.css'; // Importa il CSS corretto
+import './CarDetails.css';
 
-// Icone
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
-import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
-import LocalGasStationIcon from '@mui/icons-material/LocalGasStation';
-import SpeedIcon from '@mui/icons-material/Speed';
-import SettingsIcon from '@mui/icons-material/Settings';
-import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
-import PaletteIcon from '@mui/icons-material/Palette';
-import PersonIcon from '@mui/icons-material/Person';
-import LocationOnIcon from '@mui/icons-material/LocationOn';
-import PhoneIcon from '@mui/icons-material/Phone';
-import EmailIcon from '@mui/icons-material/Email';
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-
-const CarDetails = () => {
+const CarDetail = () => {
   const { id } = useParams();
-  const navigate = useNavigate();
   const [car, setCar] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchCar = async () => {
+    const fetchCarDetails = async () => {
       try {
-        const response = await carService.getCarById(id);
-        setCar(response.data);
+        setLoading(true);
+        const data = await carService.getCarById(id);
+        setCar(data);
+        setLoading(false);
       } catch (error) {
-        setError('Errore nel caricamento delle informazioni dell\'auto');
-        toast.error('Errore nel caricamento delle informazioni dell\'auto');
-        console.error(error);
-      } finally {
+        console.error('Error fetching car details:', error);
+        setError('Impossibile caricare i dettagli dell\'auto');
         setLoading(false);
       }
     };
 
-    fetchCar();
+    fetchCarDetails();
   }, [id]);
 
-  const handleDelete = async () => {
-    if (window.confirm('Sei sicuro di voler eliminare questa auto?')) {
-      try {
-        await carService.deleteCar(id);
-        toast.success('Auto eliminata con successo');
-        navigate('/cars');
-      } catch (error) {
-        toast.error('Errore durante l\'eliminazione dell\'auto');
-        console.error(error);
-      }
-    }
-  };
-
-  // Formatta il prezzo con separatori delle migliaia e simbolo €
+  // Formatta il prezzo con separatore migliaia e simbolo €
   const formatPrice = (price) => {
-    return new Intl.NumberFormat('it-IT', { 
-      style: 'currency', 
+    return new Intl.NumberFormat('it-IT', {
+      style: 'currency',
       currency: 'EUR',
-      minimumFractionDigits: 0,
       maximumFractionDigits: 0
     }).format(price);
   };
@@ -80,190 +48,258 @@ const CarDetails = () => {
 
   if (loading) {
     return (
-      <div className="loading-container">
-        <div className="loading-spinner"></div>
+      <div className="container text-center my-5">
+        <div className="spinner-border text-primary" role="status">
+          <span className="visually-hidden">Caricamento...</span>
+        </div>
+        <p className="mt-3">Caricamento dettagli in corso...</p>
       </div>
     );
   }
 
-  if (error) {
+  if (error || !car) {
     return (
-      <div className="error-container">
-        <div className="alert alert-danger">{error}</div>
-        <button onClick={() => navigate('/cars')} className="btn btn-primary">
-          Torna alla lista
-        </button>
+      <div className="container my-5">
+        <div className="alert alert-danger" role="alert">
+          <h4 className="alert-heading">Errore!</h4>
+          <p>{error || 'Auto non trovata'}</p>
+          <hr />
+          <p className="mb-0">Torna alla lista delle auto disponibili.</p>
+          <Link to="/vetrina" className="btn btn-primary mt-3">
+            Torna alla vetrina
+          </Link>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="car-details-page">
-      <div className="page-header">
-        <h1>{car.title}</h1>
-        <div className="header-actions">
-          <Link to="/cars" className="btn btn-secondary">
-            <ArrowBackIcon /> Torna alla lista
-          </Link>
-          <Link to={`/cars/edit/${id}`} className="btn btn-primary">
-            <EditIcon /> Modifica
-          </Link>
-          <button onClick={handleDelete} className="btn btn-danger">
-            <DeleteIcon /> Elimina
-          </button>
+    <div className="container my-5">
+      {/* Breadcrumb */}
+      <nav aria-label="breadcrumb" className="mb-4">
+        <ol className="breadcrumb">
+          <li className="breadcrumb-item"><Link to="/">Home</Link></li>
+          <li className="breadcrumb-item"><Link to="/vetrina">Vetrina Auto</Link></li>
+          <li className="breadcrumb-item active" aria-current="page">{car.title}</li>
+        </ol>
+      </nav>
+      
+      {/* Car Detail Header */}
+      <div className="car-detail-header mb-4">
+        <h1 className="display-5 fw-bold">{car.title}</h1>
+        <div className="car-price-badge">
+          <span className="car-price-label">Prezzo</span>
+          <span className="car-price-value">{formatPrice(car.price)}</span>
         </div>
       </div>
-
-      <div className="car-details-grid">
-        <div className="car-details-main">
-          <div className="card">
-            <div className="car-image-container">
-              <img
-                src={car.image}
-                alt={car.title}
-                className="car-image"
-                onError={(e) => {
-                  e.target.onerror = null;
-                  e.target.src = "https://via.placeholder.com/800x500?text=Immagine+non+disponibile";
-                }}
-              />
+      
+      <div className="row">
+        {/* Main Image and Gallery */}
+        <div className="col-lg-8 mb-4">
+          <div className="car-main-image mb-3">
+            <img 
+              src={car.image} 
+              alt={car.title} 
+              className="img-fluid rounded shadow"
+            />
+            <div className="car-condition-badge">
+              {car.condition}
             </div>
-            <div className="car-main-info">
-              <div className="car-price-container">
-                <span className="car-price-label">Prezzo</span>
-                <span className="car-price">{formatPrice(car.price)}</span>
-              </div>
-              <div className="car-description">
-                <h3>Descrizione</h3>
-                <p>{car.description}</p>
+          </div>
+        </div>
+        
+        {/* Car Specs */}
+        <div className="col-lg-4 mb-4">
+          <div className="card shadow-sm h-100">
+            <div className="card-header bg-primary text-white">
+              <h5 className="mb-0">Caratteristiche Principali</h5>
+            </div>
+            <div className="card-body">
+              <ul className="car-specs-list">
+                <li>
+                  <i className="fas fa-calendar me-2"></i>
+                  <span className="spec-label">Anno:</span>
+                  <span className="spec-value">{car.year}</span>
+                </li>
+                <li>
+                  <i className="fas fa-road me-2"></i>
+                  <span className="spec-label">Chilometraggio:</span>
+                  <span className="spec-value">{car.mileage?.toLocaleString() || 0} km</span>
+                </li>
+                <li>
+                  <i className="fas fa-gas-pump me-2"></i>
+                  <span className="spec-label">Alimentazione:</span>
+                  <span className="spec-value">{car.fuelType}</span>
+                </li>
+                <li>
+                  <i className="fas fa-cog me-2"></i>
+                  <span className="spec-label">Cambio:</span>
+                  <span className="spec-value">{car.transmission}</span>
+                </li>
+                <li>
+                  <i className="fas fa-tachometer-alt me-2"></i>
+                  <span className="spec-label">Potenza:</span>
+                  <span className="spec-value">{car.power} CV</span>
+                </li>
+                <li>
+                  <i className="fas fa-car me-2"></i>
+                  <span className="spec-label">Trazione:</span>
+                  <span className="spec-value">{car.drivetrain}</span>
+                </li>
+                <li>
+                  <i className="fas fa-palette me-2"></i>
+                  <span className="spec-label">Colore:</span>
+                  <span className="spec-value">{car.color}</span>
+                </li>
+                <li>
+                  <i className="fas fa-users me-2"></i>
+                  <span className="spec-label">Proprietari precedenti:</span>
+                  <span className="spec-value">{car.owners}</span>
+                </li>
+              </ul>
+              
+              <div className="mt-4">
+                <a href={`tel:${car.contactInfo?.phone}`} className="btn btn-primary w-100 mb-2">
+                  <i className="fas fa-phone me-2"></i>
+                  Chiama ora
+                </a>
+                <a href={`mailto:${car.contactInfo?.email}?subject=Informazioni su ${car.title}`} className="btn btn-outline-primary w-100">
+                  <i className="fas fa-envelope me-2"></i>
+                  Email
+                </a>
               </div>
             </div>
           </div>
         </div>
-
-        <div className="car-details-sidebar">
-          <div className="card car-spec-card">
-            <h3>Specifiche</h3>
-            <ul className="car-specs-list">
-              <li>
-                <DirectionsCarIcon />
-                <span className="spec-label">Condizione</span>
-                <span className="spec-value">
-                  <span className={`condition-badge ${car.condition.toLowerCase()}`}>
-                    {car.condition}
-                  </span>
-                </span>
-              </li>
-              <li>
-                <CalendarTodayIcon />
-                <span className="spec-label">Anno</span>
-                <span className="spec-value">{car.year}</span>
-              </li>
-              <li>
-                <SpeedIcon />
-                <span className="spec-label">Chilometraggio</span>
-                <span className="spec-value">{car.mileage.toLocaleString('it-IT')} km</span>
-              </li>
-              <li>
-                <LocalGasStationIcon />
-                <span className="spec-label">Carburante</span>
-                <span className="spec-value">{car.fuelType}</span>
-              </li>
-              <li>
-                <SettingsIcon />
-                <span className="spec-label">Trasmissione</span>
-                <span className="spec-value">{car.transmission}</span>
-              </li>
-              <li>
-                <PersonIcon />
-                <span className="spec-label">Proprietari</span>
-                <span className="spec-value">{car.owners}</span>
-              </li>
-              <li>
-                <PaletteIcon />
-                <span className="spec-label">Colore</span>
-                <span className="spec-value">{car.color}</span>
-              </li>
-              <li>
-                <LocationOnIcon />
-                <span className="spec-label">Località</span>
-                <span className="spec-value">{car.location}</span>
-              </li>
-            </ul>
+      </div>
+      
+      {/* Car Description */}
+      <div className="row mb-4">
+        <div className="col-12">
+          <div className="card shadow-sm">
+            <div className="card-header">
+              <h5 className="mb-0">Descrizione</h5>
+            </div>
+            <div className="card-body">
+              <p>{car.description}</p>
+            </div>
           </div>
-
-          <div className="card car-details-card">
-            <h3>Dettagli Tecnici</h3>
-            <div className="detail-grid">
-              <div className="detail-item">
-                <span className="detail-label">Cilindrata</span>
-                <span className="detail-value">{car.engineSize} cc</span>
-              </div>
-              <div className="detail-item">
-                <span className="detail-label">Potenza</span>
-                <span className="detail-value">{car.power} CV</span>
-              </div>
-              <div className="detail-item">
-                <span className="detail-label">Trazione</span>
-                <span className="detail-value">{car.drivetrain}</span>
-              </div>
-              <div className="detail-item">
-                <span className="detail-label">Porte</span>
-                <span className="detail-value">{car.doors}</span>
-              </div>
-              <div className="detail-item">
-                <span className="detail-label">Posti</span>
-                <span className="detail-value">{car.seats}</span>
+        </div>
+      </div>
+      
+     {/* Additional Info in Cards */}
+     <div className="row">
+        {/* Technical Details */}
+        <div className="col-md-6 mb-4">
+          <div className="card shadow-sm h-100">
+            <div className="card-header">
+              <h5 className="mb-0">Dettagli Tecnici</h5>
+            </div>
+            <div className="card-body">
+              <div className="row">
+                <div className="col-6 mb-3">
+                  <span className="tech-detail-label">Cilindrata:</span>
+                  <span className="tech-detail-value">{car.engineSize} cc</span>
+                </div>
+                <div className="col-6 mb-3">
+                  <span className="tech-detail-label">Porte:</span>
+                  <span className="tech-detail-value">{car.doors}</span>
+                </div>
+                <div className="col-6 mb-3">
+                  <span className="tech-detail-label">Posti:</span>
+                  <span className="tech-detail-value">{car.seats}</span>
+                </div>
+                <div className="col-6 mb-3">
+                  <span className="tech-detail-label">Data Immatricolazione:</span>
+                  <span className="tech-detail-value">{formatDate(car.registrationDate)}</span>
+                </div>
+                <div className="col-6 mb-3">
+                  <span className="tech-detail-label">Revisione fino a:</span>
+                  <span className="tech-detail-value">{formatDate(car.inspectionValidUntil)}</span>
+                </div>
+                <div className="col-6">
+                  <span className="tech-detail-label">Assicurazione fino a:</span>
+                  <span className="tech-detail-value">{formatDate(car.insuranceValidUntil)}</span>
+                </div>
               </div>
             </div>
           </div>
-
-          <div className="card car-dates-card">
-            <h3>Date Importanti</h3>
-            <div className="detail-grid">
-              <div className="detail-item">
-                <span className="detail-label">Immatricolazione</span>
-                <span className="detail-value">{formatDate(car.registrationDate)}</span>
-              </div>
-              <div className="detail-item">
-                <span className="detail-label">Revisione valida fino</span>
-                <span className="detail-value">{formatDate(car.inspectionValidUntil)}</span>
-              </div>
-              <div className="detail-item">
-                <span className="detail-label">Assicurazione valida fino</span>
-                <span className="detail-value">{formatDate(car.insuranceValidUntil)}</span>
-              </div>
+        </div>
+        
+        {/* Optional Equipment */}
+        <div className="col-md-6 mb-4">
+          <div className="card shadow-sm h-100">
+            <div className="card-header">
+              <h5 className="mb-0">Optional</h5>
             </div>
-          </div>
-
-          <div className="card car-options-card">
-            <h3>Optional</h3>
-            <ul className="options-list">
+            <div className="card-body">
               {car.options && car.options.length > 0 ? (
-                car.options.map((option, index) => (
-                  <li key={index}>
-                    <CheckCircleIcon />
-                    <span>{option}</span>
-                  </li>
-                ))
+                <ul className="optional-list">
+                  {car.options.map((option, index) => (
+                    <li key={index}>
+                      <i className="fas fa-check-circle text-success me-2"></i>
+                      {option}
+                    </li>
+                  ))}
+                </ul>
               ) : (
-                <li className="no-options">Nessun optional specificato</li>
+                <p className="text-muted">Nessun optional specificato</p>
               )}
-            </ul>
+            </div>
           </div>
-
-          <div className="card car-contact-card">
-            <h3>Informazioni di Contatto</h3>
-            <ul className="contact-list">
-              <li>
-                <PhoneIcon />
-                <span>{car.contactInfo.phone}</span>
-              </li>
-              <li>
-                <EmailIcon />
-                <span>{car.contactInfo.email}</span>
-              </li>
-            </ul>
+        </div>
+      </div>
+      
+      {/* Contact and Location */}
+      <div className="row">
+        <div className="col-md-6 mb-4">
+          <div className="card shadow-sm">
+            <div className="card-header">
+              <h5 className="mb-0">Info di Contatto</h5>
+            </div>
+            <div className="card-body">
+              <p><strong>Sede:</strong> {car.location}</p>
+              <p><strong>Telefono:</strong> <a href={`tel:${car.contactInfo?.phone}`}>{car.contactInfo?.phone}</a></p>
+              <p><strong>Email:</strong> <a href={`mailto:${car.contactInfo?.email}`}>{car.contactInfo?.email}</a></p>
+              
+              <p className="mt-3 mb-1"><strong>Orari di apertura:</strong></p>
+              <p className="mb-1">Lun-Ven: 8:30-12:30, 14:00-18:30</p>
+              <p>Sab: 8:30-12:30</p>
+            </div>
+          </div>
+        </div>
+        
+        {/* Interested in Button */}
+        <div className="col-md-6 mb-4">
+          <div className="card shadow-sm bg-light">
+            <div className="card-body text-center p-4">
+              <h5 className="mb-3">Interessato a questa auto?</h5>
+              <p className="mb-4">Contattaci per maggiori informazioni o per fissare un appuntamento per vederla di persona.</p>
+              <div className="d-grid gap-2">
+                <a href={`tel:${car.contactInfo?.phone}`} className="btn btn-primary btn-lg">
+                  <i className="fas fa-phone me-2"></i>
+                  Chiama ora
+                </a>
+                <a href={`mailto:${car.contactInfo?.email}?subject=Informazioni su ${car.title}`} className="btn btn-outline-primary">
+                  <i className="fas fa-envelope me-2"></i>
+                  Richiedi informazioni via email
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      {/* Related Cars */}
+      <div className="related-cars mt-5">
+        <h3 className="mb-4">Auto simili che potrebbero interessarti</h3>
+        <div className="row">
+          {/* Placeholder for related cars - in a real implementation you would fetch similar cars */}
+          <div className="col-12 text-center">
+            <p className="text-muted">Caricamento auto simili...</p>
+            <Link to="/vetrina" className="btn btn-outline-primary mt-2">
+              Vedi tutte le auto disponibili
+            </Link>
           </div>
         </div>
       </div>
@@ -271,4 +307,4 @@ const CarDetails = () => {
   );
 };
 
-export default CarDetails;
+export default CarDetail;

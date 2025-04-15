@@ -1,164 +1,136 @@
-/* CSS per la pagina di dettaglio auto */
+/* CarDetail.css */
+.car-detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
 
-.car-detail-page {
-    background-color: #f9f9f9;
+.car-price-badge {
+  background-color: #f8f9fa;
+  padding: 10px 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  text-align: center;
+}
+
+.car-price-label {
+  display: block;
+  font-size: 0.9rem;
+  color: #6c757d;
+  margin-bottom: 4px;
+}
+
+.car-price-value {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #007bff;
+}
+
+.car-main-image {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.car-main-image img {
+  width: 100%;
+  max-height: 500px;
+  object-fit: cover;
+}
+
+.car-condition-badge {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background-color: #007bff;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.car-specs-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.car-specs-list li {
+  padding: 10px 0;
+  border-bottom: 1px solid #e9ecef;
+  display: flex;
+  align-items: center;
+}
+
+.car-specs-list li:last-child {
+  border-bottom: none;
+}
+
+.car-specs-list i {
+  color: #007bff;
+  width: 24px;
+  text-align: center;
+}
+
+.spec-label {
+  font-weight: 600;
+  margin-right: 10px;
+  flex: 1;
+}
+
+.spec-value {
+  color: #495057;
+}
+
+.tech-detail-label {
+  display: block;
+  font-size: 0.9rem;
+  color: #6c757d;
+  margin-bottom: 4px;
+}
+
+.tech-detail-value {
+  display: block;
+  font-weight: 600;
+  color: #212529;
+}
+
+.optional-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  columns: 2;
+}
+
+.optional-list li {
+  margin-bottom: 10px;
+  break-inside: avoid;
+}
+
+.optional-list i {
+  color: #28a745;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .car-detail-header {
+    flex-direction: column;
+    align-items: flex-start;
   }
   
-  /* Hero Section */
-  .car-detail-hero {
-    background-color: #007bff;
-    background-image: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
-    color: white;
-    padding: 50px 0;
-    margin-bottom: 30px;
-  }
-  
-  .car-detail-hero h1 {
-    font-size: 2.5rem;
-    font-weight: 700;
-    margin-bottom: 10px;
-  }
-  
-  .car-detail-hero .lead {
-    font-size: 1.25rem;
-    opacity: 0.9;
-  }
-  
-  /* Breadcrumbs */
-  .breadcrumb {
-    background-color: transparent;
-    padding: 0;
-    margin-bottom: 20px;
-  }
-  
-  .breadcrumb-item a {
-    color: #007bff;
-    text-decoration: none;
-  }
-  
-  .breadcrumb-item a:hover {
-    text-decoration: underline;
-  }
-  
-  .breadcrumb-item.active {
-    color: #6c757d;
-  }
-  
-  /* Main Image */
-  .car-main-image {
-    position: relative;
-    border-radius: 8px;
-    overflow: hidden;
+  .car-price-badge {
+    margin-top: 15px;
+    align-self: flex-start;
   }
   
   .car-main-image img {
-    width: 100%;
-    height: auto;
-    max-height: 500px;
-    object-fit: cover;
+    max-height: 350px;
   }
   
-  /* Cards */
-  .card {
-    border: none;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-    overflow: hidden;
-    margin-bottom: 20px;
+  .optional-list {
+    columns: 1;
   }
-  
-  .card-header {
-    background-color: #f8f9fa;
-    border-bottom: 1px solid rgba(0,0,0,0.05);
-    padding: 15px 20px;
-  }
-  
-  .card-header h2, .card-header h3 {
-    margin: 0;
-    font-size: 1.25rem;
-    font-weight: 600;
-  }
-  
-  .card-body {
-    padding: 20px;
-  }
-  
-  /* List Group */
-  .list-group-item {
-    border-color: rgba(0,0,0,0.05);
-    padding: 12px 20px;
-  }
-  
-  .list-group-flush:first-child .list-group-item:first-child {
-    border-top: 0;
-  }
-  
-  /* Price Display */
-  .display-4 {
-    font-weight: 700;
-    color: #007bff;
-  }
-  
-  /* Buttons */
-  .btn {
-    padding: 10px 20px;
-    font-weight: 500;
-  }
-  
-  .btn-lg {
-    padding: 12px 24px;
-    font-size: 1rem;
-  }
-  
-  /* Optional Equipment */
-  .card-body .fas.fa-check {
-    color: #28a745;
-  }
-  
-  /* Responsive Adjustments */
-  @media (max-width: 992px) {
-    .car-detail-hero h1 {
-      font-size: 2rem;
-    }
-    
-    .car-main-image img {
-      max-height: 400px;
-    }
-  }
-  
-  @media (max-width: 768px) {
-    .car-detail-hero {
-      padding: 40px 0;
-    }
-    
-    .car-detail-hero h1 {
-      font-size: 1.75rem;
-    }
-    
-    .car-detail-hero .lead {
-      font-size: 1rem;
-    }
-    
-    .card-header h2, .card-header h3 {
-      font-size: 1.1rem;
-    }
-    
-    .display-4 {
-      font-size: 2rem;
-    }
-  }
-  
-  @media (max-width: 576px) {
-    .car-detail-hero {
-      padding: 30px 0;
-    }
-    
-    .car-main-image img {
-      max-height: 300px;
-    }
-    
-    .btn-lg {
-      padding: 10px 16px;
-      font-size: 0.9rem;
-    }
-  }
+}
